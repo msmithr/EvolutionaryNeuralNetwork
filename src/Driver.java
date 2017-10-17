@@ -4,7 +4,7 @@ public class Driver {
 		Perceptron p = new Perceptron(0.1, 2);
 		
 		// AND
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10; i++) {
 			p.learn(new double[] {0, 0}, 0);
 			p.learn(new double[] {0, 1}, 0);
 			p.learn(new double[] {1, 0}, 0);

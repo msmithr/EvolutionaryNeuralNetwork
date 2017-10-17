@@ -22,9 +22,9 @@ public class Perceptron {
 	public double activate(double[] inputs) {
 		double result = 0;
 		for (int i = 0; i < weights.length; i++) {
-			result += (inputs[i]*weights[i] - theta);
+			result += (inputs[i]*weights[i]);
 		}
-		return step(result);
+		return step(result - theta);
 	}
 	
 	// activation function
