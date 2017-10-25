@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class Perceptron {
+public class Neuron {
 	private double alpha;
 	private double theta;
 	private double[] weights;
@@ -8,7 +8,7 @@ public class Perceptron {
 	Random entropy = new Random();
 	
 	// constructor
-	public Perceptron(double alpha, int numInputs) {
+	public Neuron(double alpha, int numInputs) {
 		this.alpha = alpha;
 		this.theta = (entropy.nextDouble());
 		
@@ -24,21 +24,14 @@ public class Perceptron {
 		for (int i = 0; i < weights.length; i++) {
 			result += (inputs[i]*weights[i]);
 		}
-		return step(result - theta);
+		return sigmoid(result - theta);
 	}
 	
 	// activation function
-	private double step(double x) {
-		return x >= 0 ? 1 : 0;
+	private double sigmoid(double x) {
+		return 1/(1+Math.exp(-x));
 	}
-	
-	public void learn(double[] inputs, double expected) {
-		double result = activate(inputs);
-		double error = expected - result;
-		for (int i = 0; i < weights.length; i++) {
-			weights[i] += (alpha * inputs[i] * error);
-		}
-	}
+
 	
 	public String toString() {
 		String result = "";
