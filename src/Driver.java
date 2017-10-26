@@ -1,6 +1,8 @@
 
 public class Driver {
 	public static void main(String[] args) {
-		Neuron n = new Neuron(0.1, 2);
+		NeuralNetwork n = new NeuralNetwork(3,3,1,2);
+		System.out.println(n);
+		MathLib.printVector(n.activate(new double[] {1,2}));
 	}
 }
