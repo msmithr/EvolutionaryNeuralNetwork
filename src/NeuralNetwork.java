@@ -1,58 +1,108 @@
 
-public class NeuralNetwork {
-	private Neuron[][] nArray;
-	private int numOutputs;
-	private int numInputs;
 
-	public NeuralNetwork(int numInputs, int numOutputs, int numLayers, int nodesPerLayer) {
-		this.numOutputs = numOutputs;
-		this.numInputs = numInputs;
+public class NeuralNetwork {
+	private Neuron[][] nArray; // jagged array of neurons
+	private int nNeurons;
+	private int nLayers;
+	private int nInputs;
+	private int nOutputs;
+	private double error;
+	
+	public NeuralNetwork(int[] chromosome, int nInputs, int nOutputs) {
+		int nLayers = chromosome[0];
+		int nNeurons = chromosome[1];
+		
+		this.nNeurons = nNeurons;
+		this.nLayers = nLayers;
+		this.nInputs = nInputs;
+		this.nOutputs = nOutputs;
 		
 		// initialize jagged array
-		nArray = new Neuron[numLayers + 1][];
-		nArray[nArray.length-1] = new Neuron[numOutputs];
+		nArray = new Neuron[nLayers+2][];
 		
-		for (int i = 0; i < nArray.length-1; i++) {
-			nArray[i] = new Neuron[nodesPerLayer];
+		// initialize input neurons
+		nArray[0] = new Neuron[nInputs];
+		for (int i = 0; i < nInputs; i++) {
+			nArray[0][i] = new Neuron(nNeurons, i);
 		}
-		nArray[nArray.length-1] = new Neuron[numOutputs];
 		
-		for (int i = 0; i < nArray.length-2; i++) {
-			for (int j = 0; j < nodesPerLayer; j++) {
-				nArray[i][j] = new Neuron(0.2, numLayers);
+		// initialize output neurons
+		nArray[nLayers+1] = new Neuron[nOutputs];
+		for (int i = 0; i < nOutputs; i++) {
+			nArray[nLayers+1][i] = new Neuron(0, i);
+		}
+		
+		// initialize hidden neurons
+		for (int i = 1; i < nArray.length-1; i++) {
+			nArray[i] = new Neuron[nNeurons];
+			for (int j = 0; j < nNeurons; j++) {
+				nArray[i][j] = new Neuron(nNeurons, j);
 			}
-		}
-		
-		for (int i = 0; i < numLayers; i++) {
-			nArray[nArray.length-2][i] = new Neuron(0.2, numOutputs);
-		}
-		
-		for (int i = 0; i < numOutputs; i++) {
-			nArray[nArray.length-1][i] = new Neuron(0.2, 1);
 		}
 	} // end constructor
 	
-	public double[] activate(double[] inputs) {
-		if (inputs.length != numInputs) {
-			System.out.println("Invalid number of inputs for neural net");
-			return null;
+	public void feedForward(double[] inputs) {
+		Neuron[] prevLayer;
+		
+		// initialize input neurons
+		for (int i = 0; i < inputs.length; i++) {
+			nArray[0][i].setOutput(inputs[i]);
 		}
-		double[] result = null;
-
-		for (int i = 0; i < nArray.length-1; i++) { // for each layer
-			result = new double[nArray[i][0].getNumOutputs()]; // set result to an array of the correct size
-			for (int j = 0; j < nArray[i].length; j++) { // for each node in the current layer
-				result = MathLib.vectorSum(result, nArray[i][j].activate(inputs)); // sum the results
+		
+		// propagate
+		for (int i = 1; i < nArray.length; i++) {
+			prevLayer = nArray[i-1];
+			for (int j = 0; j < nArray[i].length; j++) {
+				nArray[i][j].feedForward(prevLayer);
 			}
-			inputs = result;
+		}
+
+	} // end feedForward
+	
+	public void backPropagate(double[] targets) {
+		double error = 0;
+		double temp;
+		for (int i = 0; i < nOutputs; i++) {
+			temp = targets[i] - nArray[nArray.length-1][i].getOutput(); 
+			error += temp*temp;
+		}
+		error /= nOutputs;
+		this.error = Math.sqrt(error);
+
+		// output layer gradients
+		for (int i = 0; i < nOutputs; i++) {
+			nArray[nArray.length-1][i].calcOutputGradients(targets[i]);
+		}
+
+		// hidden layer gradients
+		for (int i = nLayers; i > 0; i--) {
+			Neuron[] hiddenLayer = nArray[i];
+			Neuron[] nextLayer = nArray[i+1];
+			
+			for (int j = 0; j < hiddenLayer.length; j++) {
+				hiddenLayer[j].calcHiddenGradients(nextLayer);
+			}
 		}
 		
-		double[] temp = new double[numOutputs];
-		for (int i = 0; i < nArray[nArray.length-1].length; i++) {
-			temp[i] = nArray[nArray.length-1][i].activate(result)[0];
+		// update weights
+		for (int i = nLayers; i > 0; i--) {
+			Neuron[] layer = nArray[i];
+			Neuron[] prevLayer = nArray[i-1];
+			
+			for (int j = 0; j < layer.length; j++) {
+				layer[j].adjustWeights(prevLayer);
+			}
+		}
+	} // end backPropagtion
+	
+	public double[] getResults() {
+		double[] result = new double[nOutputs];
+
+		for (int i = 0; i < nOutputs; i++) {
+			result[i] = nArray[nArray.length-1][i].getOutput();
 		}
 		
-		return temp;
+		return result;
 	}
 	
 	public String toString() {
@@ -64,6 +114,5 @@ public class NeuralNetwork {
 			result += "\n";
 		}
 		return result;
-	} // end toString()
-
-} // end class
+	}
+}

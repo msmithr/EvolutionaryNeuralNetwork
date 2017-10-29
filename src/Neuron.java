@@ -1,55 +1,84 @@
+
+
 import java.util.Random;
 
 public class Neuron {
-	private double alpha;
-	private double theta;
+	private double output;
 	private double[] weights;
-	private int numOutputs;
-
-	Random entropy = new Random();
+	private double[] Dweights;
+	private int index;
+	private double gradient;
+	static private double alpha = 0.2;
+	static private double beta = 0;
 	
-	// constructor
-	public Neuron(double alpha, int numOutputs) {
-		this.alpha = alpha;
-		this.theta = (entropy.nextDouble());
-		this.numOutputs = numOutputs;
+	public Neuron(int nOutput, int index) {
+		Random r = new Random();
+		weights = new double[nOutput];
+		Dweights = new double[nOutput];
 		
-		this.weights = new double[numOutputs];
-		for (int i = 0; i < numOutputs; i++) {
-			weights[i] = (entropy.nextDouble() - 0.5);
+		this.index = index;
+
+		for (int i = 0; i < nOutput; i++) {
+			weights[i] = r.nextDouble();
 		}
 	}
 	
-	// evaluate given inputs
-	public double[] activate(double[] inputs) {
+	public void setOutput(double output) {
+		this.output = output;
+	}
+	
+	public double getOutput() {
+		return output;
+	}
+	
+	public double getWeight(int index) {
+		return weights[index];
+	}
+	
+	public void feedForward(Neuron[] prevLayer) {
 		double sum = 0;
-		for (int i = 0; i < inputs.length; i++) {
-			sum += inputs[i];
+		for (int i = 0; i < prevLayer.length; i++) {
+			sum += prevLayer[i].getOutput() * prevLayer[i].getWeight(index);
 		}
-		
-		double[] result = new double[numOutputs];
-		
-		for (int i = 0; i < result.length; i++) {
-			result[i] = MathLib.sigmoid(sum*weights[i] - theta);
-		}
-		return result;
-	} // end activate
-	
-	public int getNumOutputs() {
-		return this.numOutputs;
+		output = sigmoid(sum);
 	}
-
-	public String toString() {
-		String result = "";
-		
-		result += "[ ";
-		for (int i = 0; i < weights.length; i++) {
-			result += weights[i] + " ";
+	
+	public void calcOutputGradients(double target) {
+		double error = target - this.output;
+		this.gradient = error * Dsigmoid(this.output);
+	}
+	
+	public void calcHiddenGradients(Neuron[] nextLayer) {
+		double sum = 0;
+		for (int i = 0; i < nextLayer.length; i++) {
+			sum += weights[i] * nextLayer[i].gradient;
 		}
-		result += "] ";
-		result += "; Theta = " + theta;
-		result += "; NUMOUTPUTS: " + numOutputs;
-		
-		return result;
+		this.gradient = sum * Dsigmoid(this.output);
+	}
+	
+	// adjusts weights of previous layer
+	public void adjustWeights(Neuron[] prevLayer) {
+		double oldDW;
+		double newDW;
+	
+		for (int i = 0; i < prevLayer.length; i++) {
+			Neuron neuron = prevLayer[i];
+			oldDW = neuron.Dweights[i];
+			newDW = alpha * neuron.getOutput() * this.gradient + beta * oldDW;
+			neuron.Dweights[i] = newDW;
+			neuron.weights[i] += newDW;
+		}
+	}
+	
+	private double sigmoid(double x) {
+		return Math.tanh(x);
+	}
+	
+	private double Dsigmoid(double x) {
+		return 1 - x*x;
+	}
+	
+	public String toString() {
+		return Double.toString(output);
 	}
 }
