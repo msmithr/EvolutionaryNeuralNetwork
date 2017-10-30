@@ -20,8 +20,18 @@ public class MathLib {
 		System.out.print("\n");
 	}
 	
-	// activation function
+	// sigmoid activation function
 	public static double sigmoid(double x) {
 		return 1/(1+Math.exp(-x));
+	}
+	
+	// hyperbolic tangent activation function
+	public static double tanh(double x) {
+		return Math.tanh(x);
+	}
+	
+	// hyperbolic tangent derivative
+	public static double Dtanh(double x) {
+		return 1 - x*x;
 	}
 }

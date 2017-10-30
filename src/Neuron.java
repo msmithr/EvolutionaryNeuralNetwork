@@ -40,12 +40,12 @@ public class Neuron {
 		for (int i = 0; i < prevLayer.length; i++) {
 			sum += prevLayer[i].getOutput() * prevLayer[i].getWeight(index);
 		}
-		output = sigmoid(sum);
+		output = MathLib.tanh(sum);
 	}
 	
 	public void calcOutputGradients(double target) {
 		double error = target - this.output;
-		this.gradient = error * Dsigmoid(this.output);
+		this.gradient = error * MathLib.Dtanh(this.output);
 	}
 	
 	public void calcHiddenGradients(Neuron[] nextLayer) {
@@ -53,7 +53,7 @@ public class Neuron {
 		for (int i = 0; i < nextLayer.length; i++) {
 			sum += weights[i] * nextLayer[i].gradient;
 		}
-		this.gradient = sum * Dsigmoid(this.output);
+		this.gradient = sum * MathLib.Dtanh(this.output);
 	}
 	
 	// adjusts weights of previous layer
@@ -68,14 +68,6 @@ public class Neuron {
 			neuron.Dweights[i] = newDW;
 			neuron.weights[i] += newDW;
 		}
-	}
-	
-	private double sigmoid(double x) {
-		return Math.tanh(x);
-	}
-	
-	private double Dsigmoid(double x) {
-		return 1 - x*x;
 	}
 	
 	public String toString() {
