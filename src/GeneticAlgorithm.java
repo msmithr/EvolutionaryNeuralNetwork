@@ -1,14 +1,50 @@
 import java.util.Random;
+import NeuralNetwork.NeuralNetwork;
 
 public class GeneticAlgorithm {
 	private int chromosomeLength;
+	private int popSize;
 	private Random r;
+	private int nInputs;
+	private int nOutputs;
+	private int nNeurons;
+	private int nLayers;
+	private double[][] population;
+	private NeuralNetwork[] networks;
 	
-	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons) {
+	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, int popSize) {
 		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs);
 		this.r = new Random();
+		this.popSize = popSize;
+		networks = new NeuralNetwork[popSize];
+		
+		// initialize population
+		this.population = new double[popSize][];
+		for (int i = 0; i < popSize; i++) {
+			population[i] = randomChromosome();
+		}
+		
+		generateNetworks(population);
+		
+		
 	} // end constructor
 
+	// randomly generate a new chromosome
+	public double[] randomChromosome() {
+		double[] newChromosome = new double[chromosomeLength];
+		for (int i = 0; i < chromosomeLength; i++) {
+			newChromosome[i] = r.nextDouble() - 0.5;
+		}
+		return newChromosome;
+	}
+	
+	// generate a set of neural networks from a population
+	public void generateNetworks(double[][] population) {
+		for (int i = 0; i < population.length; i++) {
+			networks[i] = new NeuralNetwork(population[i], nInputs, nOutputs, nLayers, nNeurons);
+		}
+	}
+	
 	// crossover operation between two parent chromosomes
 	// returns two child chromosomes
 	// single point crossover
@@ -40,6 +76,14 @@ public class GeneticAlgorithm {
 	}
 	
 	public String toString() {
-		return Integer.toString(this.chromosomeLength);
+		String result = "";
+		for (int i = 0; i < population.length; i++) {
+			for (int j = 0; j < population[i].length; j++) {
+				result += population[i][j] + " ";
+			}
+			result += "\n";
+		}
+		
+		return result;
 	}
 }
