@@ -12,7 +12,7 @@ public class GeneticAlgorithm {
 	private Random r;
 	private double[][] population;
 	private NeuralNetwork[] networks;
-	private double[][][] learningData;
+	DataSet learningData;
 	
 	/**
 	 * Genetic algorithm for neural network optimization
@@ -21,10 +21,9 @@ public class GeneticAlgorithm {
 	 * @param nLayers Number of hidden layers for the neural networks
 	 * @param nNeurons Number of neurons per hidden layer for the neural network
 	 * @param popSize The population size 
-	 * @param learningData A 3D array representing the data for the system to learn from
-	 * 					      Array of 2D arrays, containing input and expected output
+	 * @param learningData DataSet containing data to learn from
 	 */
-	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, int popSize, double[][][] learningData) {
+	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, int popSize, DataSet learningData) {
 		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs);
 		this.r = new Random();
 		this.popSize = popSize;
@@ -71,21 +70,24 @@ public class GeneticAlgorithm {
 	 * @param learningData Data to learn from
 	 * @return fitness of the network
 	 */
-	public double fitness(NeuralNetwork network, double[][][] learningData) {
+	public double fitness(NeuralNetwork network, DataSet learningData) {
 		double[] activationResult;
+		double[] inputs;
+		double[] expectedOutputs;
 		double error;
 		double fitness = 0;
 		
-		for (int i = 0; i < learningData.length; i++) {
+		for (int i = 0; i < learningData.getSize(); i++) {
 			error = 0;
-			activationResult = network.feedForward(learningData[i][0]);
-			for (int j = 0; j < learningData[i][1].length; i++) {
-				error += learningData[i][1][j] - activationResult[j];
+			inputs = learningData.getInputs(i);
+			expectedOutputs = learningData.getOutputs(i);
+			activationResult = network.feedForward(inputs);
+			
+			for (int j = 0; j < expectedOutputs.length; i++) {
+				error += expectedOutputs[i] - activationResult[i];
 			}
-			error *= error;
-			fitness += 1/error;
-		}
-		
+			fitness += 1/(error*error);
+		}		
 		
 		return fitness;
 	} // end fitness()
@@ -96,7 +98,7 @@ public class GeneticAlgorithm {
 	 * @param learningData Data for networks to learn from
 	 * @return Double array of fitness for each network
 	 */
-	public double[] fitnessPop(NeuralNetwork[] networks, double[][][] learningData) {
+	public double[] fitnessPop(NeuralNetwork[] networks, DataSet learningData) {
 		double[] result = new double[popSize];
 		for (int i = 0; i < popSize; i++) {
 			result[i] = fitness(networks[i], learningData);
