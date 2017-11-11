@@ -1,3 +1,4 @@
+package GeneticAlgorithm;
 import java.util.Random;
 import NeuralNetwork.NeuralNetwork;
 
@@ -11,6 +12,7 @@ public class GeneticAlgorithm {
 	private Random r;
 	private double[][] population;
 	private NeuralNetwork[] networks;
+	private double[][][] learningData;
 	
 	/**
 	 * Genetic algorithm for neural network optimization
@@ -19,11 +21,14 @@ public class GeneticAlgorithm {
 	 * @param nLayers Number of hidden layers for the neural networks
 	 * @param nNeurons Number of neurons per hidden layer for the neural network
 	 * @param popSize The population size 
+	 * @param learningData A 3D array representing the data for the system to learn from
+	 * 					      Array of 2D arrays, containing input and expected output
 	 */
-	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, int popSize) {
+	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, int popSize, double[][][] learningData) {
 		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs);
 		this.r = new Random();
 		this.popSize = popSize;
+		this.learningData = learningData;
 		networks = new NeuralNetwork[popSize];
 		
 		// initialize population
@@ -46,7 +51,7 @@ public class GeneticAlgorithm {
 			newChromosome[i] = r.nextDouble() - 0.5;
 		}
 		return newChromosome;
-	}
+	} // end randomChromosome()
 	
 	/**
 	 * Generates a set of neural networks from a population of chromosomes
@@ -58,7 +63,46 @@ public class GeneticAlgorithm {
 			networks[i] = new NeuralNetwork(population[i], nInputs, nOutputs, nLayers, nNeurons);
 		}
 		return networks;
-	}
+	} // end generateNetworks()
+	
+	/**
+	 * Calculate the fitness of a given neural network given learning data
+	 * @param network Neural network to calculate fitness of 
+	 * @param learningData Data to learn from
+	 * @return fitness of the network
+	 */
+	public double fitness(NeuralNetwork network, double[][][] learningData) {
+		double[] activationResult;
+		double error;
+		double fitness = 0;
+		
+		for (int i = 0; i < learningData.length; i++) {
+			error = 0;
+			activationResult = network.feedForward(learningData[i][0]);
+			for (int j = 0; j < learningData[i][1].length; i++) {
+				error += learningData[i][1][j] - activationResult[j];
+			}
+			error *= error;
+			fitness += 1/error;
+		}
+		
+		
+		return fitness;
+	} // end fitness()
+	
+	/**
+	 * Calculate the fitness for a population of networks
+	 * @param networks Array of networks to calculate fitness of
+	 * @param learningData Data for networks to learn from
+	 * @return Double array of fitness for each network
+	 */
+	public double[] fitnessPop(NeuralNetwork[] networks, double[][][] learningData) {
+		double[] result = new double[popSize];
+		for (int i = 0; i < popSize; i++) {
+			result[i] = fitness(networks[i], learningData);
+		}
+		return result;
+	} // end fitnessPop()
 	
 	/**
 	 * Crossover genetic operator, simple single point crossover
@@ -95,7 +139,7 @@ public class GeneticAlgorithm {
 		int point = r.nextInt(chromosomeLength);
 		child[point] += r.nextGaussian();
 		return child;
-	}
+	} // end mutation()
 	
 	public String toString() {
 		String result = "";
@@ -107,5 +151,5 @@ public class GeneticAlgorithm {
 		}
 		
 		return result;
-	}
+	} // end toString()
 }
