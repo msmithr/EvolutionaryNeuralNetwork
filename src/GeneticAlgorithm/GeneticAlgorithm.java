@@ -9,8 +9,8 @@ public class GeneticAlgorithm {
 	private int nOutputs;
 	private int nNeurons;
 	private int nLayers;
-	private int crossoverProbability;
-	private int mutationProbability;
+	private double crossoverProbability;
+	private double mutationProbability;
 	private Random r;
 	private double[][] population;
 	private NeuralNetwork[] networks;
@@ -26,11 +26,15 @@ public class GeneticAlgorithm {
 	 * @param learningData DataSet containing data to learn from
 	 */
 	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, 
-			int popSize, int crossoverProbability, int mutationProbability, DataSet learningData) {
+			int popSize, double crossoverProbability, double mutationProbability, DataSet learningData) {
 		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs);
 		this.r = new Random();
 		this.popSize = popSize;
 		this.learningData = learningData;
+		this.nInputs = nInputs;
+		this.nOutputs = nOutputs;
+		this.nLayers = nLayers;
+		this.nNeurons = nNeurons;
 		this.crossoverProbability = crossoverProbability;
 		this.mutationProbability = mutationProbability;
 		networks = new NeuralNetwork[popSize];
@@ -44,6 +48,54 @@ public class GeneticAlgorithm {
 		networks = generateNetworks(population);
 		
 	} // end constructor
+	
+	public void go() {
+		iterate(population);
+	}
+	
+	public void iterate(double[][] population) {
+		NeuralNetwork[] networks = generateNetworks(population);
+		double[] fitness = fitnessPop(networks, learningData);
+		double sumFitness = 0;
+		double previous = 0;
+		double parent1;
+		double parent2;
+		int parent1Index = 0;
+		int parent2Index = 0;
+		
+		// construct 'roulette ranges'
+		for (int i = 0; i < fitness.length; i++) {
+			sumFitness += fitness[i];
+		}
+
+		for (int i = 0; i < fitness.length; i++) {
+			fitness[i] = (fitness[i] / sumFitness) + previous;
+			previous = fitness[i];
+		}
+		
+		for (int i = 0; i < fitness.length; i++) {
+			System.out.println(i + ": " + fitness[i]);
+		}
+		
+		// select two parents based on fitness
+		parent1 = r.nextDouble();
+		parent2 = r.nextDouble();
+
+		while (fitness[parent1Index] < parent1 && parent1Index < fitness.length-1) {
+			parent1Index++;
+		}
+		while (fitness[parent2Index] < parent2 && parent2Index < fitness.length-1) {
+			parent2Index++;
+		}
+		
+		System.out.println(parent1Index);
+		System.out.println(parent2Index);
+		
+		// crossover
+		// mutation
+		
+		
+	}
 
 	/**
 	 * Generates a random chromosome
@@ -88,10 +140,14 @@ public class GeneticAlgorithm {
 			expectedOutputs = learningData.getOutputs(i);
 			activationResult = network.feedForward(inputs);
 			
-			for (int j = 0; j < expectedOutputs.length; i++) {
-				error += expectedOutputs[i] - activationResult[i];
+			for (int j = 0; j < expectedOutputs.length; j++) {
+				error += expectedOutputs[j] - activationResult[j];
 			}
-			fitness += 1/(error*error);
+			if (error == 0) {
+				fitness += 100;
+			} else {
+				fitness += 1/(error*error);
+			}
 		}		
 		
 		return fitness;
