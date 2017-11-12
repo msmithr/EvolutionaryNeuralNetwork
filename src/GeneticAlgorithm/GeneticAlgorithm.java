@@ -9,6 +9,8 @@ public class GeneticAlgorithm {
 	private int nOutputs;
 	private int nNeurons;
 	private int nLayers;
+	private int crossoverProbability;
+	private int mutationProbability;
 	private Random r;
 	private double[][] population;
 	private NeuralNetwork[] networks;
@@ -23,11 +25,14 @@ public class GeneticAlgorithm {
 	 * @param popSize The population size 
 	 * @param learningData DataSet containing data to learn from
 	 */
-	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, int popSize, DataSet learningData) {
+	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, 
+			int popSize, int crossoverProbability, int mutationProbability, DataSet learningData) {
 		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs);
 		this.r = new Random();
 		this.popSize = popSize;
 		this.learningData = learningData;
+		this.crossoverProbability = crossoverProbability;
+		this.mutationProbability = mutationProbability;
 		networks = new NeuralNetwork[popSize];
 		
 		// initialize population
