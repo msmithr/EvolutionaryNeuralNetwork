@@ -22,6 +22,8 @@ public class GeneticAlgorithm {
 	 * @param nLayers Number of hidden layers for the neural networks
 	 * @param nNeurons Number of neurons per hidden layer for the neural network
 	 * @param popSize The population size 
+	 * @param crossoverProbability probability for crossover operator
+	 * @param mutationProbability probability for mutation operator
 	 * @param learningData DataSet containing data to learn from
 	 */
 	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, 
@@ -45,7 +47,7 @@ public class GeneticAlgorithm {
 		
 	} // end constructor
 	
-	public NeuralNetwork go() {
+	public NeuralNetwork optimize() {
 		for (int i = 0; i < 1000; i++) {
 			population = iterate(population);
 		}
