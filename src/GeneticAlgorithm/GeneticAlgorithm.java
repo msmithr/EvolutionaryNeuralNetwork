@@ -13,7 +13,6 @@ public class GeneticAlgorithm {
 	private double mutationProbability;
 	private Random r;
 	private double[][] population;
-	private NeuralNetwork[] networks;
 	DataSet learningData;
 	
 	/**
@@ -37,7 +36,6 @@ public class GeneticAlgorithm {
 		this.nNeurons = nNeurons;
 		this.crossoverProbability = crossoverProbability;
 		this.mutationProbability = mutationProbability;
-		networks = new NeuralNetwork[popSize];
 		
 		// initialize population
 		this.population = new double[popSize][];
@@ -45,15 +43,30 @@ public class GeneticAlgorithm {
 			population[i] = randomChromosome();
 		}
 		
-		networks = generateNetworks(population);
-		
 	} // end constructor
 	
-	public void go() {
-		iterate(population);
+	public NeuralNetwork go() {
+		for (int i = 0; i < 1000; i++) {
+			population = iterate(population);
+		}
+		NeuralNetwork[] results = generateNetworks(population);
+		double[] fitness = this.fitnessPop(results, learningData);
+		
+		// find the best network
+		double max = 0;
+		int maxIndex = 0;
+		for (int i = 0; i < fitness.length; i++) {
+			if (fitness[i] > max) {
+				maxIndex = i;
+				max = fitness[i];
+			}
+		}
+		
+		return results[maxIndex];
+		
 	}
 	
-	public void iterate(double[][] population) {
+	public double[][] iterate(double[][] population) {
 		NeuralNetwork[] networks = generateNetworks(population);
 		double[] fitness = fitnessPop(networks, learningData);
 		double sumFitness = 0;
@@ -62,39 +75,50 @@ public class GeneticAlgorithm {
 		double parent2;
 		int parent1Index = 0;
 		int parent2Index = 0;
+		double[][] newPopulation = new double[population.length][chromosomeLength];
 		
 		// construct 'roulette ranges'
 		for (int i = 0; i < fitness.length; i++) {
 			sumFitness += fitness[i];
 		}
-
+		
 		for (int i = 0; i < fitness.length; i++) {
 			fitness[i] = (fitness[i] / sumFitness) + previous;
 			previous = fitness[i];
 		}
 		
-		for (int i = 0; i < fitness.length; i++) {
-			System.out.println(i + ": " + fitness[i]);
+		int index = 0;
+		while (index < popSize) {
+			// select two parents based on fitness
+			parent1 = r.nextDouble();
+			parent2 = r.nextDouble();
+			parent1Index = 0;
+			parent2Index = 0;
+	
+			while (fitness[parent1Index] < parent1 && parent1Index < fitness.length-1) {
+				parent1Index++;
+			}
+			while (fitness[parent2Index] < parent2 && parent2Index < fitness.length-1) {
+				parent2Index++;
+			}
+			
+			double[][] children;
+		
+			if (r.nextDouble() < crossoverProbability) {
+				children = crossover(population[parent1Index], population[parent2Index]);
+			} else {
+				children = new double[][] {population[parent1Index], population[parent2Index]};
+			}
+			
+			if (r.nextDouble() < mutationProbability) {
+				children[0] = mutation(children[0]);
+				children[1] = mutation(children[1]);
+			}
+			
+			newPopulation[index++] = children[0];
+			newPopulation[index++] = children[1];
 		}
-		
-		// select two parents based on fitness
-		parent1 = r.nextDouble();
-		parent2 = r.nextDouble();
-
-		while (fitness[parent1Index] < parent1 && parent1Index < fitness.length-1) {
-			parent1Index++;
-		}
-		while (fitness[parent2Index] < parent2 && parent2Index < fitness.length-1) {
-			parent2Index++;
-		}
-		
-		System.out.println(parent1Index);
-		System.out.println(parent2Index);
-		
-		// crossover
-		// mutation
-		
-		
+		return newPopulation;
 	}
 
 	/**
