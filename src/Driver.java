@@ -12,7 +12,7 @@ public class Driver {
 		data.addData(new double[] {1,0}, new double[] {1});
 		data.addData(new double[] {1,1}, new double[] {0});
 		
-		GeneticAlgorithm GA = new GeneticAlgorithm(2, 1, 2, 2, 10000, 0.15, 0.15, data);
+		GeneticAlgorithm GA = new GeneticAlgorithm(2, 1, 5, 5, 30, 0.15, 0.15, data);
 		
 		NeuralNetwork solution = GA.optimize();
 		
