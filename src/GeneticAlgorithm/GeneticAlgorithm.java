@@ -14,7 +14,7 @@ public class GeneticAlgorithm {
 	private double mutationProbability;
 	private Random r;
 	private double[][] population;
-	DataSet learningData;
+	private DataSet learningData;
 	
 	/**
 	 * Genetic algorithm for neural network optimization
@@ -50,7 +50,7 @@ public class GeneticAlgorithm {
 	} // end constructor
 	
 	public NeuralNetwork optimize() {
-		for (int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 100; i++) {
 			population = iterate(population);
 		}
 		NeuralNetwork[] results = generateNetworks(population);
@@ -85,6 +85,8 @@ public class GeneticAlgorithm {
 		for (int i = 0; i < fitness.length; i++) {
 			sumFitness += fitness[i];
 		}
+		
+		System.out.println(sumFitness);
 		
 		for (int i = 0; i < fitness.length; i++) {
 			fitness[i] = (fitness[i] / sumFitness) + previous;
