@@ -1,0 +1,74 @@
+package neuralnetwork;
+
+public class NeuralNetwork {
+	private double[][][] weightMatrices;
+	private double[][] thresholdVectors;
+	
+	/**
+	 * Neural Network 
+	 * @param chromosome Chromosome encoding the network
+	 * @param nInputs Number of inputs
+	 * @param nOutputs Number of outputs
+	 * @param nLayers Number of hidden layers
+	 * @param nNeurons Number of neurons per hidden layer
+	 */
+	public NeuralNetwork(double[] chromosome, int nInputs, int nOutputs, int nLayers, int nNeurons) {
+		weightMatrices = new double[nLayers + 1][][];
+		thresholdVectors = new double[nLayers + 1][];
+		
+		int chromosomeIndex = 0; // current index in the chromosome
+		int weightIndex = 0; // current index in weight array
+		int thresholdIndex = 0; // current index in threshold array
+		int curInputs = nInputs;
+		int curOutputs = nNeurons;
+		
+		// decode the chromosome
+		for (int i = 0; i < nLayers + 1; i++) {
+			double[][] newMatrix = new double[curInputs][curOutputs];
+			for (int j = 0; j < curInputs; j++) {
+				for (int k = 0; k < curOutputs; k++) {
+					newMatrix[j][k] = chromosome[chromosomeIndex++];
+				}
+			}
+			weightMatrices[weightIndex++] = newMatrix;
+			
+			double[] newVector = new double[curOutputs];
+			for (int j = 0; j < curOutputs; j++) {
+				newVector[j] = chromosome[chromosomeIndex++];
+			}
+			thresholdVectors[thresholdIndex++] = newVector;
+			
+			curInputs = curOutputs;
+			curOutputs = i == nLayers-1 ? nOutputs : nNeurons;
+		} // end for
+	} // end constructor
+	
+	/**
+	 * Feed forward; get the corresponding output for an input
+	 * @param inputs Array of doubles representing the input
+	 * @return Array of doubles representing the output
+	 */
+	public double[] feedForward(double[] inputs) {
+		double[] state = inputs;
+		
+		for (int i = 0; i < weightMatrices.length; i++) {
+			state = VectorOperations.multiply(state, weightMatrices[i]);
+			state = VectorOperations.sum(state, VectorOperations.neg(thresholdVectors[i]));
+			state = VectorOperations.sigmoid(state);
+		}
+		
+		return state;
+	} // end feedForward()
+	
+	public String toString() {
+		String result = "";
+		for (int i = 0; i < weightMatrices.length; i++) {
+			result += VectorOperations.toString(weightMatrices[i]);
+			result += "\n";
+			result += VectorOperations.toString(new double[][] {thresholdVectors[i]});
+			result += "\n";
+		}
+		return result;
+	} // end toString()
+	
+} // end class

@@ -1,6 +1,7 @@
 package GeneticAlgorithm;
 import java.util.Random;
-import NeuralNetwork.NeuralNetwork;
+
+import neuralnetwork.NeuralNetwork;
 
 public class GeneticAlgorithm {
 	private int chromosomeLength;
@@ -28,7 +29,8 @@ public class GeneticAlgorithm {
 	 */
 	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, 
 			int popSize, double crossoverProbability, double mutationProbability, DataSet learningData) {
-		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs);
+		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nInputs + nOutputs;
+		
 		this.r = new Random();
 		this.popSize = popSize;
 		this.learningData = learningData;
@@ -48,7 +50,7 @@ public class GeneticAlgorithm {
 	} // end constructor
 	
 	public NeuralNetwork optimize() {
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 100000; i++) {
 			population = iterate(population);
 		}
 		NeuralNetwork[] results = generateNetworks(population);
@@ -167,7 +169,7 @@ public class GeneticAlgorithm {
 			activationResult = network.feedForward(inputs);
 			
 			for (int j = 0; j < expectedOutputs.length; j++) {
-				error += expectedOutputs[j] - activationResult[j];
+				//error += expectedOutputs[j] - activationResult[j];
 			}
 			if (error == 0) {
 				fitness += 100;
