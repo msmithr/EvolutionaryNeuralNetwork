@@ -6,12 +6,20 @@ import neuralnetwork.NeuralNetwork;
 public class Driver {
 	public static void main(String[] args) {
 		
+		//GeneticAlgorithm GA = new GeneticAlgorithm(1, 4, 2, 2, 100, 0.7, 0.1, null);
+		
+		//double[] chromosome1 = {1,0.5,2,0.5,1,3,0.5,2,4,0.5,-1,-1,0.5,0,0,0.5,1,1,0.5,2,2,0.5};
+		//double[] chromosome2 = {7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7};
+		
+		//System.out.println(VectorOperations.toString(GA.crossover(chromosome1, chromosome2)));
+		
+
 		DataSet learningData = new DataSet(2, 1);
 		learningData.addData(new double[] {0, 0}, new double[] {0});
-		learningData.addData(new double[] {1, 0}, new double[] {0});
-		learningData.addData(new double[] {0, 1}, new double[] {0});
+		learningData.addData(new double[] {1, 0}, new double[] {1});
+		learningData.addData(new double[] {0, 1}, new double[] {1});
 		learningData.addData(new double[] {1, 1}, new double[] {1});
-		GeneticAlgorithm GA = new GeneticAlgorithm(2, 1, 1, 2, 100, 0.75, 0.1, learningData);
+		GeneticAlgorithm GA = new GeneticAlgorithm(2, 1, 10, 2, 100, 0.75, 0.1, learningData);
 		
 		//System.out.println(GA);
 
@@ -26,6 +34,7 @@ public class Driver {
 
 		//System.out.println(VectorOperations.toString(nn.feedForward(new double[] {1})));
 		//System.out.println(nn);
+
 
 	}
 	

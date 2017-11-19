@@ -143,26 +143,21 @@ public class GeneticAlgorithm {
 		double[] activationResult;
 		double[] inputs;
 		double[] expectedOutputs;
-		double error;
-		double fitness = 0;
+		double error = 0;
+		double sumSquaredErrors = 0;
 		
 		for (int i = 0; i < learningData.getSize(); i++) {
-			error = 0;
 			inputs = learningData.getInputs(i);
 			expectedOutputs = learningData.getOutputs(i);
 			activationResult = network.feedForward(inputs);
 			
 			for (int j = 0; j < expectedOutputs.length; j++) {
 				error += expectedOutputs[j] - activationResult[j];
-			}
-			if (error == 0) {
-				fitness += 10000;
-			} else {
-				fitness += 1/(error*error);
+				sumSquaredErrors += (error * error);
 			}
 		}		
-		
-		return fitness;
+		return 1 / sumSquaredErrors;
+		//return fitness;
 	} // end fitness()
 	
 	/**
@@ -199,6 +194,8 @@ public class GeneticAlgorithm {
 		for (int i = 0; i < fitness.length; i++) {
 			sumFitness += fitness[i];
 		}
+		
+		System.out.println(sumFitness);
 
 		// normalize fitness vector
 		for (int i = 0; i < fitness.length; i++) {
