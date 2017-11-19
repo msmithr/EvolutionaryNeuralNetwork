@@ -17,30 +17,27 @@ public class NeuralNetwork {
 		thresholdVectors = new double[nLayers + 1][];
 		
 		int chromosomeIndex = 0; // current index in the chromosome
-		int weightIndex = 0; // current index in weight array
-		int thresholdIndex = 0; // current index in threshold array
 		int curInputs = nInputs;
 		int curOutputs = nNeurons;
 		
 		// decode the chromosome
 		for (int i = 0; i < nLayers + 1; i++) {
 			double[][] newMatrix = new double[curInputs][curOutputs];
-			for (int j = 0; j < curInputs; j++) {
-				for (int k = 0; k < curOutputs; k++) {
-					newMatrix[j][k] = chromosome[chromosomeIndex++];
-				}
-			}
-			weightMatrices[weightIndex++] = newMatrix;
-			
 			double[] newVector = new double[curOutputs];
+			
 			for (int j = 0; j < curOutputs; j++) {
+				for (int k = 0; k < curInputs; k++) {
+					newMatrix[k][j] = chromosome[chromosomeIndex++];
+				}
 				newVector[j] = chromosome[chromosomeIndex++];
 			}
-			thresholdVectors[thresholdIndex++] = newVector;
+			weightMatrices[i] = newMatrix;
+			thresholdVectors[i] = newVector;
 			
 			curInputs = curOutputs;
 			curOutputs = i == nLayers-1 ? nOutputs : nNeurons;
 		} // end for
+		
 	} // end constructor
 	
 	/**
@@ -53,10 +50,9 @@ public class NeuralNetwork {
 		
 		for (int i = 0; i < weightMatrices.length; i++) {
 			state = VectorOperations.multiply(state, weightMatrices[i]);
-			state = VectorOperations.sum(state, VectorOperations.neg(thresholdVectors[i]));
+			state = VectorOperations.sum(state, VectorOperations.neg(VectorOperations.abs(thresholdVectors[i])));
 			state = VectorOperations.sigmoid(state);
 		}
-		
 		return state;
 	} // end feedForward()
 	

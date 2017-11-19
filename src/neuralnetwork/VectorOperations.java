@@ -75,8 +75,18 @@ public class VectorOperations {
 	} // end sigmoid()
 	
 	private static double sigmoid(double x) {
-		return 1/1+Math.exp(-x);
+		return 1/(1+Math.exp(-x));
 	} // end sigmoid()
+	
+	public static double[] abs(double[] vector) {
+		double[] result = new double[vector.length];
+		
+		for (int i = 0; i < result.length; i++) {
+			result[i] = Math.abs(vector[i]);
+		}
+		
+		return result;
+	}
 	
 	/**
 	 * Return a string representing a matrix
