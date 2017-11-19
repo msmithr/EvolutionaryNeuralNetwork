@@ -4,12 +4,13 @@ import java.util.Random;
 import neuralnetwork.NeuralNetwork;
 
 public class GeneticAlgorithm {
-	private int chromosomeLength;
+	private int chromosomeLength; // number of doubles in the chromosomes
 	private int popSize;
 	private int nInputs;
 	private int nOutputs;
 	private int nNeurons;
 	private int nLayers;
+	private int nGenes; // number of 'genes' in the chromosomes
 	private double crossoverProbability;
 	private double mutationProbability;
 	private Random r;
@@ -29,7 +30,9 @@ public class GeneticAlgorithm {
 	 */
 	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, 
 			int popSize, double crossoverProbability, double mutationProbability, DataSet learningData) {
+		
 		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nInputs + nOutputs;
+		this.nGenes = (nNeurons * nLayers) + nOutputs;
 		
 		this.r = new Random();
 		this.popSize = popSize;
@@ -50,7 +53,7 @@ public class GeneticAlgorithm {
 	} // end constructor
 	
 	public NeuralNetwork optimize() {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1000; i++) {
 			population = iterate(population);
 		}
 		NeuralNetwork[] results = generateNetworks(population);
@@ -71,61 +74,39 @@ public class GeneticAlgorithm {
 	}
 	
 	public double[][] iterate(double[][] population) {
-		NeuralNetwork[] networks = generateNetworks(population);
-		double[] fitness = fitnessPop(networks, learningData);
-		double sumFitness = 0;
-		double previous = 0;
-		double parent1;
-		double parent2;
-		int parent1Index = 0;
-		int parent2Index = 0;
+		int[] parentIndices;
+		int parent1Index;
+		int parent2Index;
 		double[][] newPopulation = new double[population.length][chromosomeLength];
-		
-		// construct 'roulette ranges'
-		for (int i = 0; i < fitness.length; i++) {
-			sumFitness += fitness[i];
-		}
-		
-		System.out.println(sumFitness);
-		
-		for (int i = 0; i < fitness.length; i++) {
-			fitness[i] = (fitness[i] / sumFitness) + previous;
-			previous = fitness[i];
-		}
 		
 		int index = 0;
 		while (index < popSize) {
-			// select two parents based on fitness
-			parent1 = r.nextDouble();
-			parent2 = r.nextDouble();
-			parent1Index = 0;
-			parent2Index = 0;
-	
-			while (fitness[parent1Index] < parent1 && parent1Index < fitness.length-1) {
-				parent1Index++;
-			}
-			while (fitness[parent2Index] < parent2 && parent2Index < fitness.length-1) {
-				parent2Index++;
-			}
+			// selection
+			parentIndices = selection(population, learningData);
+			parent1Index = parentIndices[0];
+			parent2Index = parentIndices[1];
 			
 			double[][] children;
 		
+			// crossover
 			if (r.nextDouble() < crossoverProbability) {
 				children = crossover(population[parent1Index], population[parent2Index]);
 			} else {
 				children = new double[][] {population[parent1Index], population[parent2Index]};
 			}
 			
+			// mutation
 			if (r.nextDouble() < mutationProbability) {
 				children[0] = mutation(children[0]);
 				children[1] = mutation(children[1]);
 			}
 			
+			// add new children to population
 			newPopulation[index++] = children[0];
 			newPopulation[index++] = children[1];
 		}
 		return newPopulation;
-	}
+	} // end iterate()
 
 	/**
 	 * Generates a random chromosome
@@ -171,10 +152,10 @@ public class GeneticAlgorithm {
 			activationResult = network.feedForward(inputs);
 			
 			for (int j = 0; j < expectedOutputs.length; j++) {
-				//error += expectedOutputs[j] - activationResult[j];
+				error += expectedOutputs[j] - activationResult[j];
 			}
 			if (error == 0) {
-				fitness += 100;
+				fitness += 10000;
 			} else {
 				fitness += 1/(error*error);
 			}
@@ -198,39 +179,112 @@ public class GeneticAlgorithm {
 	} // end fitnessPop()
 	
 	/**
-	 * Crossover genetic operator, simple single point crossover
+	 * Selection genetic operator
+	 * @param population Current population
+	 * @return Indices of two chromosomes selected randomly based on fitness
+	 */
+	public int[] selection(double[][] population, DataSet learningData) {
+		// construct 'roulette ranges'
+		double sumFitness = 0;
+		double previous = 0;
+		double parent1Selection;
+		double parent2Selection;
+		int parent1Index;
+		int parent2Index;
+	
+		NeuralNetwork[] nns = generateNetworks(population);
+		double[] fitness = fitnessPop(nns, learningData);
+		
+		for (int i = 0; i < fitness.length; i++) {
+			sumFitness += fitness[i];
+		}
+
+		// normalize fitness vector
+		for (int i = 0; i < fitness.length; i++) {
+			fitness[i] = (fitness[i] / sumFitness) + previous;
+			previous = fitness[i];
+		}
+		
+		parent1Selection = r.nextDouble();
+		parent2Selection = r.nextDouble();
+		parent1Index = 0;
+		parent2Index = 0;
+
+		while (fitness[parent1Index] < parent1Selection && parent1Index < fitness.length-1) {
+			parent1Index++;
+		}
+		while (fitness[parent2Index] < parent2Selection && parent2Index < fitness.length-1) {
+			parent2Index++;
+		}
+		
+		return new int[] {parent1Index, parent2Index};
+	} // end selection()
+	
+	/**
+	 * Crossover genetic operator
 	 * @param parent1 First parent
 	 * @param parent2 Second parent
 	 * @return Array of two child chromosomes resulting from the crossover
 	 */
 	public double[][] crossover(double[] parent1, double[] parent2) {
-		int point = r.nextInt(chromosomeLength);
-		
+
+		int gene = r.nextInt(nGenes); // randomly select a gene
+		int curInputs = nInputs;
+		int index = 0;
 		double[] child1 = new double[chromosomeLength];
 		double[] child2 = new double[chromosomeLength];
 		
-		for (int i = 0; i < point; i++) {
+		int iteration = 0;
+		for (int i = 0; i < gene; i++) {
+			index += curInputs + 1;
+			if (iteration == nInputs) {
+				curInputs = nNeurons;
+			}
+			iteration++;
+		}
+		
+		for (int i = 0; i < index; i++) {
 			child1[i] = parent1[i];
 			child2[i] = parent2[i];
 		}
 		
-		for (int i = point; i < chromosomeLength; i++) {
+		for (int i = index; i < index+curInputs+1; i++) {
 			child1[i] = parent2[i];
 			child2[i] = parent1[i];
+		}
+		
+		for (int i = index+curInputs+1; i < child1.length; i++) {
+			child1[i] = parent1[i];
+			child2[i] = parent2[i];
 		}
 		
 		return new double[][] {child1, child2};
 	} // end crossover()
 	
 	/**
-	 * Mutation genetic operator, simple Gaussian mutation
+	 * Mutation genetic operator
 	 * @param chromosome Chromosome to be mutated
 	 * @return A mutated version of the chromosome
 	 */
 	public double[] mutation(double[] chromosome) {
+		int gene = r.nextInt(nGenes); // randomly select a gene
+
+		// find indices surrounding gene
+		int index = 0;
+		int curInputs = nInputs;
+		int iteration = 0;
+		for (int i = 0; i < gene; i++) {
+			index += curInputs + 1;
+			if (iteration == nInputs) {
+				curInputs = nNeurons;
+			}
+			iteration++;
+		}
+		
 		double[] child = chromosome.clone();
-		int point = r.nextInt(chromosomeLength);
-		child[point] += r.nextGaussian();
+		for (int i = index; i < index+curInputs; i++) {
+			child[index] += (r.nextDouble() - 0.5)*2;
+		}
 		return child;
 	} // end mutation()
 	

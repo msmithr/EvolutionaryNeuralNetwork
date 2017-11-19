@@ -11,21 +11,22 @@ public class Driver {
 		learningData.addData(new double[] {1, 0}, new double[] {0});
 		learningData.addData(new double[] {0, 1}, new double[] {0});
 		learningData.addData(new double[] {1, 1}, new double[] {1});
-		GeneticAlgorithm GA = new GeneticAlgorithm(2, 1, 3, 5, 100, 0.15, 0.15, learningData);
+		GeneticAlgorithm GA = new GeneticAlgorithm(2, 1, 1, 2, 100, 0.75, 0.1, learningData);
 		
+		//System.out.println(GA);
+
 		NeuralNetwork nn = GA.optimize();
+		
+		System.out.println(nn);
 		
 		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {0, 0})));
 		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {0, 1})));
 		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {1, 0})));
 		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {1, 1})));
 
-		/*
-		double[] chromosome = {1,2,0.5,0.5,1,2,3,4,0.5,0.5,-1,0,1,2,-1,0,1,2,0.5,0.5,0.5,0.5};
-		NeuralNetwork nn = new NeuralNetwork(chromosome, 1, 4, 2, 2);
-		
-		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {1})));
-		*/
+		//System.out.println(VectorOperations.toString(nn.feedForward(new double[] {1})));
+		//System.out.println(nn);
+
 	}
 	
 }
