@@ -2,6 +2,7 @@ package GeneticAlgorithm;
 import java.util.Random;
 
 import neuralnetwork.NeuralNetwork;
+import neuralnetwork.VectorOperations;
 
 public class GeneticAlgorithm {
 	private int chromosomeLength; // number of doubles in the chromosomes
@@ -31,7 +32,7 @@ public class GeneticAlgorithm {
 	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, 
 			int popSize, double crossoverProbability, double mutationProbability, DataSet learningData) {
 		
-		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nInputs + nOutputs;
+		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nOutputs;
 		this.nGenes = (nNeurons * nLayers) + nOutputs;
 		
 		this.r = new Random();
