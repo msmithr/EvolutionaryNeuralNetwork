@@ -1,9 +1,7 @@
-
-
 package neuralnetwork;
 
 /**
- * Static class containing simple matrix operations
+ * Static class containing simple vector operations
  */
 public class VectorOperations {
 	
@@ -77,9 +75,14 @@ public class VectorOperations {
 	} // end sigmoid()
 	
 	private static double sigmoid(double x) {
-		return Math.tanh(x);
+		return 1/1+Math.exp(-x);
 	} // end sigmoid()
 	
+	/**
+	 * Return a string representing a matrix
+	 * @param matrix Given matrix
+	 * @return String representing given matrix
+	 */
 	public static String toString(double[][] matrix) {
 		String result = "";
 		
@@ -91,8 +94,13 @@ public class VectorOperations {
 		}
 		
 		return result;
-	}
+	} // end toString()
 	
+	/**
+	 * Return a string representing a vector
+	 * @param vector Given vector
+	 * @return String representing given vector
+	 */
 	public static String toString(double[] vector) {
 		String result = "";
 		
@@ -102,6 +110,6 @@ public class VectorOperations {
 		result += '\n';
 		
 		return result;
-	}
+	} // end toString()
 	
 } // end class
