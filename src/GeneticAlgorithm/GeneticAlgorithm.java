@@ -235,7 +235,7 @@ public class GeneticAlgorithm {
 		int iteration = 0;
 		for (int i = 0; i < gene; i++) {
 			index += curInputs + 1;
-			if (iteration == nInputs) {
+			if (iteration == nNeurons-1) {
 				curInputs = nNeurons;
 			}
 			iteration++;
@@ -273,7 +273,7 @@ public class GeneticAlgorithm {
 		int iteration = 0;
 		for (int i = 0; i < gene; i++) {
 			index += curInputs + 1;
-			if (iteration == nInputs) {
+			if (iteration == nNeurons-1) {
 				curInputs = nNeurons;
 			}
 			iteration++;
