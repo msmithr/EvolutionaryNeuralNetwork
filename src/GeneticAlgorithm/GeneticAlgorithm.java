@@ -104,6 +104,7 @@ public class GeneticAlgorithm {
 			
 			// add new children to population
 			newPopulation[index++] = children[0];
+			if (index == popSize) break;
 			newPopulation[index++] = children[1];
 		}
 		return newPopulation;
