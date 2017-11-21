@@ -2,8 +2,8 @@ import neuralnetwork.VectorOperations;
 import GeneticAlgorithm.DataSet;
 import GeneticAlgorithm.GeneticAlgorithm;
 import GeneticAlgorithm.OldGA;
-//import neuralnetwork.NeuralNetwork;
-import OldNN.NeuralNetwork;
+import neuralnetwork.NeuralNetwork;
+//import OldNN.NeuralNetwork;
 
 public class Driver {
 	public static void main(String[] args) {
@@ -20,8 +20,8 @@ public class Driver {
 		learningData.addData(new double[] {0, 0}, new double[] {0});
 		learningData.addData(new double[] {1, 0}, new double[] {1});
 		learningData.addData(new double[] {0, 1}, new double[] {1});
-		learningData.addData(new double[] {1, 1}, new double[] {0});
-		OldGA GA = new OldGA(2, 1, 2, 10, 100, 0.75, 0.01, learningData);
+		learningData.addData(new double[] {1, 1}, new double[] {1});
+		GeneticAlgorithm GA = new GeneticAlgorithm(2, 1, 2, 10, 100, 0.75, 0.10, learningData);
 		
 		//System.out.println(GA);
 
