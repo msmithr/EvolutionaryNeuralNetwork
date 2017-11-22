@@ -1,4 +1,4 @@
-package OldNN;
+ package OldNN;
 
 public class NeuralNetwork {
 	private Neuron[][] nArray; // jagged array of neurons

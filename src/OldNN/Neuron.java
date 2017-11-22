@@ -1,5 +1,7 @@
 package OldNN;
 
+import java.util.Random;
+
 public class Neuron {
 	private double output;
 	private double[] weights;

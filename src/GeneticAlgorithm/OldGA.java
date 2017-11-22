@@ -54,7 +54,7 @@ public class OldGA {
 	} // end constructor
 	
 	public NeuralNetwork optimize() {
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 1000; i++) {
 			population = iterate(population);
 		}
 		NeuralNetwork[] results = generateNetworks(population);

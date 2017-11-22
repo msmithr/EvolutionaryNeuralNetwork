@@ -75,7 +75,10 @@ public class VectorOperations {
 	} // end sigmoid()
 	
 	private static double sigmoid(double x) {
-		return 1/(1+Math.exp(-x));
+		//return 1/(1+Math.exp(-x));
+		if (x < 0) return 0;
+		else return 1;
+		//return Math.tanh(x);
 	} // end sigmoid()
 	
 	public static double[] abs(double[] vector) {

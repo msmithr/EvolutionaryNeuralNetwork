@@ -1,9 +1,7 @@
 import neuralnetwork.VectorOperations;
 import GeneticAlgorithm.DataSet;
 import GeneticAlgorithm.GeneticAlgorithm;
-import GeneticAlgorithm.OldGA;
-//import neuralnetwork.NeuralNetwork;
-import OldNN.NeuralNetwork;
+import neuralnetwork.NeuralNetwork;
 
 public class Driver {
 	public static void main(String[] args) {
@@ -16,12 +14,13 @@ public class Driver {
 		//System.out.println(VectorOperations.toString(GA.crossover(chromosome1, chromosome2)));
 		
 
-		DataSet learningData = new DataSet(2, 1);
-		learningData.addData(new double[] {0, 0}, new double[] {0});
-		learningData.addData(new double[] {1, 0}, new double[] {1});
-		learningData.addData(new double[] {0, 1}, new double[] {1});
-		learningData.addData(new double[] {1, 1}, new double[] {0});
-		OldGA GA = new OldGA(2, 1, 2, 10, 100, 0.75, 0.01, learningData);
+		DataSet learningData = new DataSet(4, 1);
+		learningData.addData(new double[] {0, 0, 0, 0}, new double[] {0});
+		learningData.addData(new double[] {0, 0, 0, 1}, new double[] {1});
+		learningData.addData(new double[] {0, 0, 1, 0}, new double[] {0});
+		learningData.addData(new double[] {0, 1, 0, 0}, new double[] {1});
+		learningData.addData(new double[] {1, 0, 0, 0}, new double[] {0});
+		GeneticAlgorithm GA = new GeneticAlgorithm(4, 1, 2, 4, 100, 0.75, 0.10, learningData);
 		
 		//System.out.println(GA);
 
@@ -29,10 +28,11 @@ public class Driver {
 		
 		System.out.println(nn);
 		
-		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {0, 0})));
-		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {0, 1})));
-		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {1, 0})));
-		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {1, 1})));
+		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {0, 0, 0, 0})));
+		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {0, 0, 0, 1})));
+		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {0, 0, 1, 0})));
+		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {0, 1, 0, 0})));
+		System.out.println(VectorOperations.toString(nn.feedForward(new double[] {1, 0, 0, 0})));
 
 		//System.out.println(VectorOperations.toString(nn.feedForward(new double[] {1})));
 		//System.out.println(nn);

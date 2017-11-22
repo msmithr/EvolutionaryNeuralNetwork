@@ -2,7 +2,6 @@ package GeneticAlgorithm;
 import java.util.Random;
 
 import neuralnetwork.NeuralNetwork;
-import neuralnetwork.VectorOperations;
 
 public class GeneticAlgorithm {
 	private int chromosomeLength; // number of doubles in the chromosomes
@@ -54,7 +53,7 @@ public class GeneticAlgorithm {
 	} // end constructor
 	
 	public NeuralNetwork optimize() {
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 100; i++) {
 			population = iterate(population);
 		}
 		NeuralNetwork[] results = generateNetworks(population);
@@ -156,8 +155,11 @@ public class GeneticAlgorithm {
 				error += expectedOutputs[j] - activationResult[j];
 				sumSquaredErrors += (error * error);
 			}
-		}		
-		return 1 / sumSquaredErrors;
+		}
+		if (sumSquaredErrors == 0) {
+			return 1000;
+		}
+		return sumSquaredErrors;
 		//return fitness;
 	} // end fitness()
 	
@@ -218,6 +220,26 @@ public class GeneticAlgorithm {
 		
 		return new int[] {parent1Index, parent2Index};
 	} // end selection()
+	
+	public int[] tournamentSelection(double[][] population, DataSet learningData) {
+		NeuralNetwork[] nns = generateNetworks(population);
+		double[] fitness = fitnessPop(nns, learningData);
+		int[] results = new int[2];
+
+		for (int i = 0; i < 2; i++) {
+			int index1 = r.nextInt(popSize);
+			int index2 = r.nextInt(popSize);
+			double randomvalue = r.nextDouble();
+			
+			if (randomvalue < 0.9) {
+				results[i] = fitness[index1] < fitness[index2] ? index1 : index2;
+			} else {
+				results[i] = fitness[index1] > fitness[index2] ? index1 : index2;
+			}
+		}
+		
+		return results;
+	}
 	
 	/**
 	 * Crossover genetic operator
