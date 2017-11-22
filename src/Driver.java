@@ -1,13 +1,10 @@
 import neuralnetwork.VectorOperations;
 import GeneticAlgorithm.DataSet;
 import GeneticAlgorithm.GeneticAlgorithm;
-<<<<<<< HEAD
 import neuralnetwork.NeuralNetwork;
-=======
 import GeneticAlgorithm.OldGA;
 import neuralnetwork.NeuralNetwork;
 //import OldNN.NeuralNetwork;
->>>>>>> dfc81faf10f6866b3ff71b01f409ace71b4f464c
 
 public class Driver {
 	public static void main(String[] args) {
@@ -20,7 +17,6 @@ public class Driver {
 		//System.out.println(VectorOperations.toString(GA.crossover(chromosome1, chromosome2)));
 		
 
-<<<<<<< HEAD
 		DataSet learningData = new DataSet(4, 1);
 		learningData.addData(new double[] {0, 0, 0, 0}, new double[] {0});
 		learningData.addData(new double[] {0, 0, 0, 1}, new double[] {1});
@@ -28,15 +24,7 @@ public class Driver {
 		learningData.addData(new double[] {0, 1, 0, 0}, new double[] {1});
 		learningData.addData(new double[] {1, 0, 0, 0}, new double[] {0});
 		GeneticAlgorithm GA = new GeneticAlgorithm(4, 1, 2, 4, 100, 0.75, 0.10, learningData);
-=======
-		DataSet learningData = new DataSet(2, 1);
-		learningData.addData(new double[] {0, 0}, new double[] {0});
-		learningData.addData(new double[] {1, 0}, new double[] {1});
-		learningData.addData(new double[] {0, 1}, new double[] {1});
-		learningData.addData(new double[] {1, 1}, new double[] {1});
-		GeneticAlgorithm GA = new GeneticAlgorithm(2, 1, 2, 10, 100, 0.75, 0.10, learningData);
->>>>>>> dfc81faf10f6866b3ff71b01f409ace71b4f464c
-		
+
 		//System.out.println(GA);
 
 		NeuralNetwork nn = GA.optimize();
