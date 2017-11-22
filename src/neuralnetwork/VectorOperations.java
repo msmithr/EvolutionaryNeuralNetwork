@@ -64,20 +64,20 @@ public class VectorOperations {
 		return result;
 	} // end sum()
 	
-	public static double[] sigmoid(double[] vector) {
+	public static double[] step(double[] vector) {
 		double[] result = new double[vector.length];
 		
 		for (int i = 0; i < result.length; i++) {
-			result[i] = sigmoid(vector[i]);
+			result[i] = step(vector[i]);
 		}
 		
 		return result;
-	} // end sigmoid()
+	} // end step()
 	
-	private static double sigmoid(double x) {
+	private static double step(double x) {
 		if (x < 0) return 0;
 		else return 1;
-	} // end sigmoid()
+	} // end step()
 	
 	public static double[] abs(double[] vector) {
 		double[] result = new double[vector.length];

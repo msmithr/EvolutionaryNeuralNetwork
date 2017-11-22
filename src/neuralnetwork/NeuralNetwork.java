@@ -51,7 +51,7 @@ public class NeuralNetwork {
 		for (int i = 0; i < weightMatrices.length; i++) {
 			state = VectorOperations.multiply(state, weightMatrices[i]);
 			//state = VectorOperations.sum(state, VectorOperations.neg(VectorOperations.abs(thresholdVectors[i])));
-			state = VectorOperations.sigmoid(state);
+			state = VectorOperations.step(state);
 		}
 		return state;
 	} // end feedForward()
