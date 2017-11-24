@@ -1,11 +1,9 @@
-package GeneticAlgorithm;
+package evolutionaryNeuralNetwork;
 import java.util.Random;
 
-//import neuralnetwork.NeuralNetwork;
-import OldNN.NeuralNetwork;
-//import neuralnetwork.VectorOperations;
+import evolutionaryNeuralNetworkInterfaces.GeneticAlgorithmInterface;
 
-public class OldGA {
+public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	private int chromosomeLength; // number of doubles in the chromosomes
 	private int popSize;
 	private int nInputs;
@@ -30,10 +28,11 @@ public class OldGA {
 	 * @param mutationProbability probability for mutation operator
 	 * @param learningData DataSet containing data to learn from
 	 */
-	public OldGA(int nInputs, int nOutputs, int nLayers, int nNeurons, 
+	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, 
 			int popSize, double crossoverProbability, double mutationProbability, DataSet learningData) {
 		
-		this.chromosomeLength = nNeurons * (nInputs + nNeurons*(nLayers-1) + nOutputs);
+		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nOutputs;
+		this.nGenes = (nNeurons * nLayers) + nOutputs;
 		
 		this.r = new Random();
 		this.popSize = popSize;
@@ -53,9 +52,9 @@ public class OldGA {
 		
 	} // end constructor
 	
-	public NeuralNetwork optimize() {
-		for (int i = 0; i < 1000; i++) {
-			population = iterate(population);
+	public NeuralNetwork optimize(int iterations) {
+		for (int i = 0; i < iterations; i++) {
+			iterate();
 		}
 		NeuralNetwork[] results = generateNetworks(population);
 		double[] fitness = this.fitnessPop(results, learningData);
@@ -74,7 +73,11 @@ public class OldGA {
 		
 	}
 	
-	public double[][] iterate(double[][] population) {
+	/**
+	 * Transition the population to it's next iteration
+	 * @param population 
+	 */
+	private void iterate() {
 		int[] parentIndices;
 		int parent1Index;
 		int parent2Index;
@@ -107,14 +110,15 @@ public class OldGA {
 			if (index == popSize) break;
 			newPopulation[index++] = children[1];
 		}
-		return newPopulation;
+		
+		this.population = newPopulation;
 	} // end iterate()
 
 	/**
 	 * Generates a random chromosome
 	 * @return Randomly generated chromosome with elements between -0.5 and 0.5
 	 */
-	public double[] randomChromosome() {
+	private double[] randomChromosome() {
 		double[] newChromosome = new double[chromosomeLength];
 		for (int i = 0; i < chromosomeLength; i++) {
 			newChromosome[i] = r.nextDouble() - 0.5;
@@ -126,7 +130,7 @@ public class OldGA {
 	 * Generates a set of neural networks from a population of chromosomes
 	 * @param population 
 	 */
-	public NeuralNetwork[] generateNetworks(double[][] population) {
+	private NeuralNetwork[] generateNetworks(double[][] population) {
 		NeuralNetwork[] networks = new NeuralNetwork[popSize];
 		for (int i = 0; i < popSize; i++) {
 			networks[i] = new NeuralNetwork(population[i], nInputs, nOutputs, nLayers, nNeurons);
@@ -140,7 +144,7 @@ public class OldGA {
 	 * @param learningData Data to learn from
 	 * @return fitness of the network
 	 */
-	public double fitness(NeuralNetwork network, DataSet learningData) {
+	private double fitness(NeuralNetwork network, DataSet learningData) {
 		double[] activationResult;
 		double[] inputs;
 		double[] expectedOutputs;
@@ -156,8 +160,11 @@ public class OldGA {
 				error += expectedOutputs[j] - activationResult[j];
 				sumSquaredErrors += (error * error);
 			}
-		}		
-		return 1 / sumSquaredErrors;
+		}
+		if (sumSquaredErrors == 0) {
+			return 1000;
+		}
+		return sumSquaredErrors;
 		//return fitness;
 	} // end fitness()
 	
@@ -167,7 +174,7 @@ public class OldGA {
 	 * @param learningData Data for networks to learn from
 	 * @return Double array of fitness for each network
 	 */
-	public double[] fitnessPop(NeuralNetwork[] networks, DataSet learningData) {
+	private double[] fitnessPop(NeuralNetwork[] networks, DataSet learningData) {
 		double[] result = new double[popSize];
 		for (int i = 0; i < popSize; i++) {
 			result[i] = fitness(networks[i], learningData);
@@ -180,7 +187,7 @@ public class OldGA {
 	 * @param population Current population
 	 * @return Indices of two chromosomes selected randomly based on fitness
 	 */
-	public int[] selection(double[][] population, DataSet learningData) {
+	private int[] selection(double[][] population, DataSet learningData) {
 		// construct 'roulette ranges'
 		double sumFitness = 0;
 		double previous = 0;
@@ -225,20 +232,36 @@ public class OldGA {
 	 * @param parent2 Second parent
 	 * @return Array of two child chromosomes resulting from the crossover
 	 */
-	public double[][] crossover(double[] parent1, double[] parent2) {
-		int point = r.nextInt(chromosomeLength);
-		
+	private double[][] crossover(double[] parent1, double[] parent2) {
+
+		int gene = r.nextInt(nGenes); // randomly select a gene
+		int curInputs = nInputs;
+		int index = 0;
 		double[] child1 = new double[chromosomeLength];
 		double[] child2 = new double[chromosomeLength];
 		
-		for (int i = 0; i < point; i++) {
+		int iteration = 0;
+		for (int i = 0; i < gene; i++) {
+			index += curInputs + 1;
+			if (iteration == nNeurons-1) {
+				curInputs = nNeurons;
+			}
+			iteration++;
+		}
+		
+		for (int i = 0; i < index; i++) {
 			child1[i] = parent1[i];
 			child2[i] = parent2[i];
 		}
 		
-		for (int i = point; i < chromosomeLength; i++) {
+		for (int i = index; i < index+curInputs+1; i++) {
 			child1[i] = parent2[i];
 			child2[i] = parent1[i];
+		}
+		
+		for (int i = index+curInputs+1; i < child1.length; i++) {
+			child1[i] = parent1[i];
+			child2[i] = parent2[i];
 		}
 		
 		return new double[][] {child1, child2};
@@ -249,10 +272,25 @@ public class OldGA {
 	 * @param chromosome Chromosome to be mutated
 	 * @return A mutated version of the chromosome
 	 */
-	public double[] mutation(double[] chromosome) {
+	private double[] mutation(double[] chromosome) {
+		int gene = r.nextInt(nGenes); // randomly select a gene
+
+		// find indices surrounding gene
+		int index = 0;
+		int curInputs = nInputs;
+		int iteration = 0;
+		for (int i = 0; i < gene; i++) {
+			index += curInputs + 1;
+			if (iteration == nNeurons-1) {
+				curInputs = nNeurons;
+			}
+			iteration++;
+		}
+		
 		double[] child = chromosome.clone();
-		int point = r.nextInt(chromosomeLength);
-		child[point] += r.nextGaussian();
+		for (int i = index; i < index+curInputs; i++) {
+			child[index] += (r.nextDouble() - 0.5)*2;
+		}
 		return child;
 	} // end mutation()
 	

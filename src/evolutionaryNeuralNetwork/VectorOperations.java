@@ -1,4 +1,4 @@
-package neuralnetwork;
+package evolutionaryNeuralNetwork;
 
 /**
  * Static class containing simple vector operations
@@ -64,6 +64,11 @@ public class VectorOperations {
 		return result;
 	} // end sum()
 	
+	/**
+	 * Heaviside step function of each value in a vector
+	 * @param vector Vector input
+	 * @return New vector containing step function result of each element
+	 */
 	public static double[] step(double[] vector) {
 		double[] result = new double[vector.length];
 		
@@ -74,11 +79,21 @@ public class VectorOperations {
 		return result;
 	} // end step()
 	
+	/**
+	 * Heaviside step function of a single double
+	 * @param x Input x
+	 * @return step(x)
+	 */
 	private static double step(double x) {
 		if (x < 0) return 0;
 		else return 1;
 	} // end step()
 	
+	/**
+	 * Takes the absolute value of each element of a vector
+	 * @param vector Input vector
+	 * @return Vector containing the absolute value of each of the input vector elements
+	 */
 	public static double[] abs(double[] vector) {
 		double[] result = new double[vector.length];
 		

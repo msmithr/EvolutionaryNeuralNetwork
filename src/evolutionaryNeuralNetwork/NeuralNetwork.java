@@ -1,6 +1,8 @@
-package neuralnetwork;
+package evolutionaryNeuralNetwork;
 
-public class NeuralNetwork {
+import evolutionaryNeuralNetworkInterfaces.NeuralNetworkInterface;
+
+public class NeuralNetwork implements NeuralNetworkInterface{
 	private double[][][] weightMatrices;
 	private double[][] thresholdVectors;
 	
@@ -40,11 +42,6 @@ public class NeuralNetwork {
 		
 	} // end constructor
 	
-	/**
-	 * Feed forward; get the corresponding output for an input
-	 * @param inputs Array of doubles representing the input
-	 * @return Array of doubles representing the output
-	 */
 	public double[] feedForward(double[] inputs) {
 		double[] state = inputs;
 		
