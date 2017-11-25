@@ -6,9 +6,13 @@ import evolutionaryNeuralNetworkInterfaces.DataSetInterface;
 
 public class DataSet implements DataSetInterface{
 	private ArrayList<dataElement> data;
+	private int nInputs;
+	private int nOutputs;
 	
 	public DataSet(int nInputs, int nOutputs) {
 		data = new ArrayList<dataElement>();
+		this.nInputs = nInputs;
+		this.nOutputs = nOutputs;
 	}
 	
 	public void addData(double[] inputs, double[] outputs) {

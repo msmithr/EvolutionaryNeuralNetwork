@@ -13,6 +13,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	private int nGenes; // number of 'genes' in the chromosomes
 	private double crossoverProbability;
 	private double mutationProbability;
+	private int tournSize;
 	private Random r;
 	private double[][] population;
 	private DataSet learningData;
@@ -29,7 +30,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	 * @param learningData DataSet containing data to learn from
 	 */
 	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, 
-			int popSize, double crossoverProbability, double mutationProbability, DataSet learningData) {
+			int popSize, double crossoverProbability, double mutationProbability, int tournSize, DataSet learningData) {
 		
 		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nOutputs;
 		this.nGenes = (nNeurons * nLayers) + nOutputs;
@@ -43,6 +44,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		this.nNeurons = nNeurons;
 		this.crossoverProbability = crossoverProbability;
 		this.mutationProbability = mutationProbability;
+		this.tournSize = tournSize;
 		
 		// initialize population
 		this.population = new double[popSize][];
@@ -60,16 +62,16 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		double[] fitness = this.fitnessPop(results, learningData);
 		
 		// find the best network
-		double max = 0;
-		int maxIndex = 0;
+		double min = Double.MAX_VALUE;
+		int minIndex = 0;
 		for (int i = 0; i < fitness.length; i++) {
-			if (fitness[i] > max) {
-				maxIndex = i;
-				max = fitness[i];
+			if (fitness[i] < min) {
+				minIndex = i;
+				min = fitness[i];
 			}
 		}
 		
-		return results[maxIndex];
+		return results[minIndex];
 		
 	}
 	
@@ -78,25 +80,23 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	 * @param population 
 	 */
 	private void iterate() {
-		int[] parentIndices;
-		int parent1Index;
-		int parent2Index;
 		double[][] newPopulation = new double[population.length][chromosomeLength];
 		double[] child;
+		double[] parent1;
+		double[] parent2;
 		
 		int index = 0;
 		while (index < popSize) {
 			// selection
-			parentIndices = selection(population, learningData);
-			parent1Index = parentIndices[0];
-			parent2Index = parentIndices[1];
+			parent1 = tournamentSelection(population);
+			parent2 = tournamentSelection(population);
 			
 		
 			// crossover
 			if (r.nextDouble() < crossoverProbability) {
-				child = crossover(population[parent1Index], population[parent2Index]);
+				child = crossover(parent1, parent2);
 			} else {
-				child = population[parent1Index].clone();
+				child = parent1.clone();
 			}
 			
 			// mutation
@@ -107,6 +107,14 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 			// add new child to population
 			newPopulation[index++] = child;
 		}
+		
+		double minFitness = Double.MAX_VALUE;
+		for (int i = 0; i < popSize; i++) {
+			if (fitness(newPopulation[i], learningData) < minFitness) {
+				minFitness = fitness(newPopulation[i], learningData);
+			}
+		}
+		System.out.println(minFitness);
 		
 		this.population = newPopulation;
 	} // end iterate()
@@ -154,16 +162,18 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 			activationResult = network.feedForward(inputs);
 			
 			for (int j = 0; j < expectedOutputs.length; j++) {
-				error += expectedOutputs[j] - activationResult[j];
+				error = expectedOutputs[j] - activationResult[j];
 				sumSquaredErrors += (error * error);
 			}
-		}
-		if (sumSquaredErrors == 0) {
-			return 1000;
 		}
 		return sumSquaredErrors;
 		//return fitness;
 	} // end fitness()
+	
+	private double fitness(double[] chromosome, DataSet learningData) {
+		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons);
+		return fitness(nn, learningData);
+	}
 	
 	/**
 	 * Calculate the fitness for a population of networks
@@ -179,49 +189,18 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		return result;
 	} // end fitnessPop()
 	
-	/**
-	 * Selection genetic operator
-	 * @param population Current population
-	 * @return Indices of two chromosomes selected randomly based on fitness
-	 */
-	private int[] selection(double[][] population, DataSet learningData) {
-		// construct 'roulette ranges'
-		double sumFitness = 0;
-		double previous = 0;
-		double parent1Selection;
-		double parent2Selection;
-		int parent1Index;
-		int parent2Index;
-	
-		NeuralNetwork[] nns = generateNetworks(population);
-		double[] fitness = fitnessPop(nns, learningData);
-		
-		for (int i = 0; i < fitness.length; i++) {
-			sumFitness += fitness[i];
+	private double[] tournamentSelection(double[][] population) {
+		double[] selection = null;
+		double[] individual;
+		for (int i = 0; i < tournSize; i++) {
+			individual = population[r.nextInt(popSize)];
+			if (selection == null || fitness(individual, learningData) < fitness(selection, learningData)) {
+				selection = individual;
+			}
 		}
 		
-		System.out.println(sumFitness);
-
-		// normalize fitness vector
-		for (int i = 0; i < fitness.length; i++) {
-			fitness[i] = (fitness[i] / sumFitness) + previous;
-			previous = fitness[i];
-		}
-		
-		parent1Selection = r.nextDouble();
-		parent2Selection = r.nextDouble();
-		parent1Index = 0;
-		parent2Index = 0;
-
-		while (fitness[parent1Index] < parent1Selection && parent1Index < fitness.length-1) {
-			parent1Index++;
-		}
-		while (fitness[parent2Index] < parent2Selection && parent2Index < fitness.length-1) {
-			parent2Index++;
-		}
-		
-		return new int[] {parent1Index, parent2Index};
-	} // end selection()
+		return selection;
+	}
 	
 	/**
 	 * Crossover genetic operator
