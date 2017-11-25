@@ -155,12 +155,11 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		double[] expectedOutputs;
 		double error = 0;
 		double sumSquaredErrors = 0;
-		
 		for (int i = 0; i < learningData.getSize(); i++) {
 			inputs = learningData.getInputs(i);
 			expectedOutputs = learningData.getOutputs(i);
 			activationResult = network.feedForward(inputs);
-			
+
 			for (int j = 0; j < expectedOutputs.length; j++) {
 				error = expectedOutputs[j] - activationResult[j];
 				sumSquaredErrors += (error * error);
