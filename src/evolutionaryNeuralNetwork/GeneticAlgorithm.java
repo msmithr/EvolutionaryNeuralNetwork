@@ -45,7 +45,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		this.nOutputs = nOutputs;
 		this.nLayers = nLayers;
 		this.nNeurons = nNeurons;
-		this.executor = Executors.newFixedThreadPool(6);
+		this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		
 		this.threads = new ArrayList<WorkerThread>();
 		for (int i = 0; i < popSize; i++) {
