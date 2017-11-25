@@ -82,6 +82,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		int parent1Index;
 		int parent2Index;
 		double[][] newPopulation = new double[population.length][chromosomeLength];
+		double[] child;
 		
 		int index = 0;
 		while (index < popSize) {
@@ -90,25 +91,21 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 			parent1Index = parentIndices[0];
 			parent2Index = parentIndices[1];
 			
-			double[][] children;
 		
 			// crossover
 			if (r.nextDouble() < crossoverProbability) {
-				children = crossover(population[parent1Index], population[parent2Index]);
+				child = crossover(population[parent1Index], population[parent2Index]);
 			} else {
-				children = new double[][] {population[parent1Index], population[parent2Index]};
+				child = population[parent1Index].clone();
 			}
 			
 			// mutation
 			if (r.nextDouble() < mutationProbability) {
-				children[0] = mutation(children[0]);
-				children[1] = mutation(children[1]);
+				child = mutation(child);
 			}
 			
-			// add new children to population
-			newPopulation[index++] = children[0];
-			if (index == popSize) break;
-			newPopulation[index++] = children[1];
+			// add new child to population
+			newPopulation[index++] = child;
 		}
 		
 		this.population = newPopulation;
@@ -230,18 +227,25 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	 * Crossover genetic operator
 	 * @param parent1 First parent
 	 * @param parent2 Second parent
-	 * @return Array of two child chromosomes resulting from the crossover
+	 * @return child
 	 */
-	private double[][] crossover(double[] parent1, double[] parent2) {
+	private double[] crossover(double[] parent1, double[] parent2) {
 
-		int gene = r.nextInt(nGenes); // randomly select a gene
 		int curInputs = nInputs;
 		int index = 0;
-		double[] child1 = new double[chromosomeLength];
-		double[] child2 = new double[chromosomeLength];
-		
+		double[] child = new double[chromosomeLength];
+
 		int iteration = 0;
-		for (int i = 0; i < gene; i++) {
+		for (int i = 0; i < nGenes; i++) {
+			if (r.nextDouble() > 0.5) {
+				for (int j = index; j < index+curInputs+1; j++) {
+					child[j] = parent1[j];
+				}
+			} else {
+				for (int j = index; j < index+curInputs+1; j++) {
+					child[j] = parent2[j];
+				}
+			}
 			index += curInputs + 1;
 			if (iteration == nNeurons-1) {
 				curInputs = nNeurons;
@@ -249,22 +253,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 			iteration++;
 		}
 		
-		for (int i = 0; i < index; i++) {
-			child1[i] = parent1[i];
-			child2[i] = parent2[i];
-		}
-		
-		for (int i = index; i < index+curInputs+1; i++) {
-			child1[i] = parent2[i];
-			child2[i] = parent1[i];
-		}
-		
-		for (int i = index+curInputs+1; i < child1.length; i++) {
-			child1[i] = parent1[i];
-			child2[i] = parent2[i];
-		}
-		
-		return new double[][] {child1, child2};
+		return child;
 	} // end crossover()
 	
 	/**

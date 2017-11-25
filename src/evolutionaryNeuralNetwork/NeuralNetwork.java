@@ -47,7 +47,7 @@ public class NeuralNetwork implements NeuralNetworkInterface{
 		
 		for (int i = 0; i < weightMatrices.length; i++) {
 			state = VectorOperations.multiply(state, weightMatrices[i]);
-			//state = VectorOperations.sum(state, VectorOperations.neg(VectorOperations.abs(thresholdVectors[i])));
+			state = VectorOperations.sum(state, VectorOperations.neg(thresholdVectors[i]));
 			state = VectorOperations.step(state);
 		}
 		return state;
