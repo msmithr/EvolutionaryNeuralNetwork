@@ -13,8 +13,8 @@ public class Driver {
 		learningData.addData(new double[] {1,1}, new double[] {1});
 		
 		
-        GeneticAlgorithm GA = new GeneticAlgorithm(2, 1, 2, 100, 10, 0.7, 0.3, 2, learningData);
-        NeuralNetwork result = GA.optimize(10000);
+        GeneticAlgorithm GA = new GeneticAlgorithm(2, 1, 2, 500, 10, 0.7, 0.3, 2, learningData);
+        NeuralNetwork result = GA.optimize(1000);
         
 
 		

@@ -1,5 +1,11 @@
 package evolutionaryNeuralNetwork;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import evolutionaryNeuralNetworkInterfaces.GeneticAlgorithmInterface;
 
@@ -10,13 +16,11 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	private int nOutputs;
 	private int nNeurons;
 	private int nLayers;
-	private int nGenes; // number of 'genes' in the chromosomes
-	private double crossoverProbability;
-	private double mutationProbability;
-	private int tournSize;
 	private Random r;
 	private double[][] population;
 	private DataSet learningData;
+	private ExecutorService executor;
+	private ArrayList<WorkerThread> threads;
 	
 	/**
 	 * Genetic algorithm for neural network optimization
@@ -33,7 +37,6 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 			int popSize, double crossoverProbability, double mutationProbability, int tournSize, DataSet learningData) {
 		
 		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nOutputs;
-		this.nGenes = (nNeurons * nLayers) + nOutputs;
 		
 		this.r = new Random();
 		this.popSize = popSize;
@@ -42,9 +45,14 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		this.nOutputs = nOutputs;
 		this.nLayers = nLayers;
 		this.nNeurons = nNeurons;
-		this.crossoverProbability = crossoverProbability;
-		this.mutationProbability = mutationProbability;
-		this.tournSize = tournSize;
+		this.executor = Executors.newFixedThreadPool(6);
+		
+		this.threads = new ArrayList<WorkerThread>();
+		for (int i = 0; i < popSize; i++) {
+			threads.add(new WorkerThread(nInputs, nOutputs, nNeurons, 
+					nLayers, crossoverProbability, mutationProbability,
+					tournSize, learningData));
+		}
 		
 		// initialize population
 		this.population = new double[popSize][];
@@ -58,6 +66,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		for (int i = 0; i < iterations; i++) {
 			iterate();
 		}
+		executor.shutdown();
 		NeuralNetwork[] results = generateNetworks(population);
 		double[] fitness = this.fitnessPop(results, learningData);
 		
@@ -81,32 +90,39 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	 */
 	private void iterate() {
 		double[][] newPopulation = new double[population.length][chromosomeLength];
-		double[] child;
-		double[] parent1;
-		double[] parent2;
-		
+		WorkerThread.setPopulation(population);
+		List<Future<Double[]>> result = null;
 		int index = 0;
-		while (index < popSize) {
-			// selection
-			parent1 = tournamentSelection(population);
-			parent2 = tournamentSelection(population);
-			
+		double[] child;
 		
-			// crossover
-			if (r.nextDouble() < crossoverProbability) {
-				child = crossover(parent1, parent2);
-			} else {
-				child = parent1.clone();
+		while (index < popSize) {
+			try {
+				result = executor.invokeAll(threads);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
-			// mutation
-			if (r.nextDouble() < mutationProbability) {
-				child = mutation(child);
+			for (Future<Double[]> i : result) {
+				try {
+					child = new double[chromosomeLength];
+					Double[] temp = i.get();
+					for (int j = 0; j < temp.length; j++) {
+						child[j] = temp[j];
+					}
+					newPopulation[index++] = child;
+					//System.out.println(VectorOperations.toString(child));
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			
-			// add new child to population
-			newPopulation[index++] = child;
 		}
+		
+		this.population = newPopulation;
 		
 		double minFitness = Double.MAX_VALUE;
 		for (int i = 0; i < popSize; i++) {
@@ -116,9 +132,15 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		}
 		System.out.println(minFitness);
 		
-		this.population = newPopulation;
-	} // end iterate()
+		
 
+	} // end iterate()
+	
+	private double fitness(double[] chromosome, DataSet learningData) {
+		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons);
+		return fitness(nn, learningData);
+	}
+	
 	/**
 	 * Generates a random chromosome
 	 * @return Randomly generated chromosome with elements between -0.5 and 0.5
@@ -169,11 +191,6 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		//return fitness;
 	} // end fitness()
 	
-	private double fitness(double[] chromosome, DataSet learningData) {
-		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons);
-		return fitness(nn, learningData);
-	}
-	
 	/**
 	 * Calculate the fitness for a population of networks
 	 * @param networks Array of networks to calculate fitness of
@@ -187,79 +204,6 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		}
 		return result;
 	} // end fitnessPop()
-	
-	private double[] tournamentSelection(double[][] population) {
-		double[] selection = null;
-		double[] individual;
-		for (int i = 0; i < tournSize; i++) {
-			individual = population[r.nextInt(popSize)];
-			if (selection == null || fitness(individual, learningData) < fitness(selection, learningData)) {
-				selection = individual;
-			}
-		}
-		
-		return selection;
-	}
-	
-	/**
-	 * Crossover genetic operator
-	 * @param parent1 First parent
-	 * @param parent2 Second parent
-	 * @return child
-	 */
-	private double[] crossover(double[] parent1, double[] parent2) {
-
-		int curInputs = nInputs;
-		int index = 0;
-		double[] child = new double[chromosomeLength];
-
-		int iteration = 0;
-		for (int i = 0; i < nGenes; i++) {
-			if (r.nextDouble() > 0.5) {
-				for (int j = index; j < index+curInputs+1; j++) {
-					child[j] = parent1[j];
-				}
-			} else {
-				for (int j = index; j < index+curInputs+1; j++) {
-					child[j] = parent2[j];
-				}
-			}
-			index += curInputs + 1;
-			if (iteration == nNeurons-1) {
-				curInputs = nNeurons;
-			}
-			iteration++;
-		}
-		
-		return child;
-	} // end crossover()
-	
-	/**
-	 * Mutation genetic operator
-	 * @param chromosome Chromosome to be mutated
-	 * @return A mutated version of the chromosome
-	 */
-	private double[] mutation(double[] chromosome) {
-		int gene = r.nextInt(nGenes); // randomly select a gene
-
-		// find indices surrounding gene
-		int index = 0;
-		int curInputs = nInputs;
-		int iteration = 0;
-		for (int i = 0; i < gene; i++) {
-			index += curInputs + 1;
-			if (iteration == nNeurons-1) {
-				curInputs = nNeurons;
-			}
-			iteration++;
-		}
-		
-		double[] child = chromosome.clone();
-		for (int i = index; i < index+curInputs; i++) {
-			child[index] += (r.nextDouble() - 0.5)*2;
-		}
-		return child;
-	} // end mutation()
 	
 	public String toString() {
 		String result = "";

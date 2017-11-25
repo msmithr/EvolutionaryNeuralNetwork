@@ -1,7 +1,5 @@
 package evolutionaryNeuralNetwork;
 
-import java.util.Random;
-
 import evolutionaryNeuralNetworkInterfaces.NeuralNetworkInterface;
 
 public class NeuralNetwork implements NeuralNetworkInterface{
