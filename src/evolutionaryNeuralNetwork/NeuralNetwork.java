@@ -5,6 +5,7 @@ import evolutionaryNeuralNetworkInterfaces.NeuralNetworkInterface;
 public class NeuralNetwork implements NeuralNetworkInterface{
 	private double[][][] weightMatrices;
 	private double[][] thresholdVectors;
+	private ActivationFunction af;
 	
 	/**
 	 * Neural Network 
@@ -14,9 +15,10 @@ public class NeuralNetwork implements NeuralNetworkInterface{
 	 * @param nLayers Number of hidden layers
 	 * @param nNeurons Number of neurons per hidden layer
 	 */
-	public NeuralNetwork(double[] chromosome, int nInputs, int nOutputs, int nLayers, int nNeurons) {
+	public NeuralNetwork(double[] chromosome, int nInputs, int nOutputs, int nLayers, int nNeurons, ActivationFunction af) {
 		weightMatrices = new double[nLayers + 1][][];
 		thresholdVectors = new double[nLayers + 1][];
+		this.af = af;
 		
 		int chromosomeIndex = 0; // current index in the chromosome
 		int curInputs = nInputs;
@@ -48,7 +50,13 @@ public class NeuralNetwork implements NeuralNetworkInterface{
 		for (int i = 0; i < weightMatrices.length; i++) {
 			state = VectorOperations.multiply(state, weightMatrices[i]);
 			state = VectorOperations.sum(state, VectorOperations.neg(thresholdVectors[i]));
-			state = VectorOperations.sigmoid(state);
+			if (af == ActivationFunction.STEP) {
+				state = VectorOperations.step(state);
+			} else if (af == ActivationFunction.SIGMOID) {
+				state = VectorOperations.sigmoid(state);
+			} else if (af == ActivationFunction.TANH) {
+				state = VectorOperations.tanh(state);
+			}
 		}
 		return state;
 	} // end feedForward()

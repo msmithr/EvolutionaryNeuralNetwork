@@ -21,6 +21,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	private DataSet learningData;
 	private ExecutorService executor;
 	private ArrayList<WorkerThread> threads;
+	private ActivationFunction af;
 	
 	/**
 	 * Genetic algorithm for neural network optimization
@@ -34,7 +35,8 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	 * @param learningData DataSet containing data to learn from
 	 */
 	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, 
-			int popSize, double crossoverProbability, double mutationProbability, int tournSize, DataSet learningData) {
+			int popSize, double crossoverProbability, double mutationProbability, 
+			int tournSize, DataSet learningData, ActivationFunction af) {
 		
 		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nOutputs;
 		
@@ -46,12 +48,13 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		this.nLayers = nLayers;
 		this.nNeurons = nNeurons;
 		this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		this.af = af;
 		
 		this.threads = new ArrayList<WorkerThread>();
 		for (int i = 0; i < popSize; i++) {
 			threads.add(new WorkerThread(nInputs, nOutputs, nNeurons, 
 					nLayers, crossoverProbability, mutationProbability,
-					tournSize, learningData));
+					tournSize, learningData, af));
 		}
 		
 		// initialize population
@@ -137,7 +140,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	} // end iterate()
 	
 	private double fitness(double[] chromosome, DataSet learningData) {
-		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons);
+		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons, af);
 		return fitness(nn, learningData);
 	}
 	
@@ -160,7 +163,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	private NeuralNetwork[] generateNetworks(double[][] population) {
 		NeuralNetwork[] networks = new NeuralNetwork[popSize];
 		for (int i = 0; i < popSize; i++) {
-			networks[i] = new NeuralNetwork(population[i], nInputs, nOutputs, nLayers, nNeurons);
+			networks[i] = new NeuralNetwork(population[i], nInputs, nOutputs, nLayers, nNeurons, af);
 		}
 		return networks;
 	} // end generateNetworks()

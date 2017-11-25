@@ -113,14 +113,29 @@ public class VectorOperations {
 		return 1 / (1 + Math.exp(-x));
 	} // end step()
 	
-	public static double[] reverse(double[] vector) {
-		for (int i = 0; i < vector.length/2; i++) {
-			double temp = vector[i];
-			vector[i] = vector[vector.length - i - 1];
-			vector[vector.length - i - 1] = temp;
+	/**
+	 * tanh function of each value in a vector
+	 * @param vector Vector input
+	 * @return New vector containing tanh result of each element
+	 */
+	public static double[] tanh(double[] vector) {
+		double[] result = new double[vector.length];
+		
+		for (int i = 0; i < result.length; i++) {
+			result[i] = tanh(vector[i]);
 		}
-		return vector;
-	}
+		
+		return result;
+	} // end step()
+	
+	/**
+	 * tanh function of a single double
+	 * @param x Input x
+	 * @return tanh(x)
+	 */
+	private static double tanh(double x) {
+		return Math.tanh(x);
+	} // end step()
 	
 	/**
 	 * Takes the absolute value of each element of a vector

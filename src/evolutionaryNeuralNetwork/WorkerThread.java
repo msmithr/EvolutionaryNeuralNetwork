@@ -16,9 +16,11 @@ public class WorkerThread implements Callable<Double[]> {
 	private int nNeurons;
 	private int nLayers;
 	private int nGenes;
+	private ActivationFunction af;
 	
 	public WorkerThread(int nInputs, int nOutputs, int nNeurons, int nLayers, 
-			double crossoverProbability, double mutationProbability, int tournSize, DataSet learningData) 
+			double crossoverProbability, double mutationProbability, int tournSize, 
+			DataSet learningData, ActivationFunction af) 
 	{
 		this.crossoverProbability = crossoverProbability;
 		this.mutationProbability = mutationProbability;
@@ -29,6 +31,7 @@ public class WorkerThread implements Callable<Double[]> {
 		this.nOutputs = nOutputs;
 		this.nNeurons = nNeurons;
 		this.nLayers = nLayers;
+		this.af = af;
 		r = new Random();
 	}
 	
@@ -158,7 +161,7 @@ public class WorkerThread implements Callable<Double[]> {
 	} // end fitness()
 	
 	private double fitness(double[] chromosome, DataSet learningData) {
-		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons);
+		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons, af);
 		return fitness(nn, learningData);
 	}
 	
