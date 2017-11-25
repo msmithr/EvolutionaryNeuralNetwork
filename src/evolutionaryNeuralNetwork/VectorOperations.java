@@ -90,6 +90,39 @@ public class VectorOperations {
 	} // end step()
 	
 	/**
+	 * Heaviside step function of each value in a vector
+	 * @param vector Vector input
+	 * @return New vector containing step function result of each element
+	 */
+	public static double[] sigmoid(double[] vector) {
+		double[] result = new double[vector.length];
+		
+		for (int i = 0; i < result.length; i++) {
+			result[i] = sigmoid(vector[i]);
+		}
+		
+		return result;
+	} // end step()
+	
+	/**
+	 * Heaviside step function of a single double
+	 * @param x Input x
+	 * @return step(x)
+	 */
+	private static double sigmoid(double x) {
+		return 1 / (1 + Math.exp(-x));
+	} // end step()
+	
+	public static double[] reverse(double[] vector) {
+		for (int i = 0; i < vector.length/2; i++) {
+			double temp = vector[i];
+			vector[i] = vector[vector.length - i - 1];
+			vector[vector.length - i - 1] = temp;
+		}
+		return vector;
+	}
+	
+	/**
 	 * Takes the absolute value of each element of a vector
 	 * @param vector Input vector
 	 * @return Vector containing the absolute value of each of the input vector elements
