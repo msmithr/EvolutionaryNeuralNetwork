@@ -50,13 +50,24 @@ public class NeuralNetwork implements NeuralNetworkInterface{
 		for (int i = 0; i < weightMatrices.length; i++) {
 			state = VectorOperations.multiply(state, weightMatrices[i]);
 			state = VectorOperations.sum(state, VectorOperations.neg(thresholdVectors[i]));
-			if (af == ActivationFunction.STEP) {
+			
+			switch (af) {
+			case STEP:
 				state = VectorOperations.step(state);
-			} else if (af == ActivationFunction.SIGMOID) {
+				break;
+			case SIGMOID:
 				state = VectorOperations.sigmoid(state);
-			} else if (af == ActivationFunction.TANH) {
+				break;
+			case TANH:
 				state = VectorOperations.tanh(state);
-			}
+				break;
+			case SIGMOID_STEP:
+				if (i != weightMatrices.length-1) {
+					state = VectorOperations.sigmoid(state);
+				} else {
+					state = VectorOperations.step(state);
+				}		
+			} // end switch/case
 		}
 		return state;
 	} // end feedForward()

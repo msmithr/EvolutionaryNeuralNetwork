@@ -10,12 +10,12 @@ public class Driver {
 		DataSet learningData = new DataSet(13, 3);
 		addData(learningData);
                 
-        GeneticAlgorithm GA = new GeneticAlgorithm(1, 1, 2, 10, 100, 0.7, 0.1, 2, learningData, ActivationFunction.SIGMOID);
+        GeneticAlgorithm GA = new GeneticAlgorithm(1, 1, 3, 15, 500, 0.7, 0.1, 2, learningData, ActivationFunction.STEP);
         NeuralNetwork result = GA.optimize(100);
         
         System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.1})));
         System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.3})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.7})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.8})));
         
 	}
 	
