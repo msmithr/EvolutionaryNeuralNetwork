@@ -72,6 +72,17 @@ public class NeuralNetwork implements NeuralNetworkInterface{
 		return state;
 	} // end feedForward()
 	
+	public double[] feedForward(double[] inputs, DataSet learningData) {
+		double[] max = learningData.getMaximums();
+		double[] min = learningData.getMinimums();
+		
+		for (int i = 0; i < inputs.length; i++) {
+			inputs[i] = (inputs[i] - min[i]) / (max[i] - min[i]);
+		}
+		
+		return feedForward(inputs);
+	} // end feedForward()
+	
 	public String toString() {
 		String result = "";
 		for (int i = 0; i < weightMatrices.length; i++) {
