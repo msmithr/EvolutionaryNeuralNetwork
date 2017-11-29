@@ -84,14 +84,38 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		}
 		
 		return results[minIndex];
+	}
+	
+	/**
+	 * Run until error reaches some threshold
+	 * @param error Error to stop at
+	 * @return The best neural network at stop time
+	 */
+	public NeuralNetwork optimizeUntil(double error) {
+		while (iterate() > error) ;
+		executor.shutdown();
 		
+		
+		// find the best network
+		NeuralNetwork[] results = generateNetworks(population);
+		double[] fitness = this.fitnessPop(results, learningData);
+		double min = Double.MAX_VALUE;
+		int minIndex = 0;
+		for (int i = 0; i < fitness.length; i++) {
+			if (fitness[i] < min) {
+				minIndex = i;
+				min = fitness[i];
+			}
+		}
+		
+		return results[minIndex];
 	}
 	
 	/**
 	 * Transition the population to it's next iteration
 	 * @param population 
 	 */
-	private void iterate() {
+	private double iterate() {
 		double[][] newPopulation = new double[population.length][chromosomeLength];
 		WorkerThread.setPopulation(population);
 		List<Future<Double[]>> result = null;
@@ -133,9 +157,9 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 				minFitness = fitness(newPopulation[i], learningData);
 			}
 		}
+		learningData.shuffle();
 		System.out.println(minFitness);
-		
-		
+		return minFitness;
 
 	} // end iterate()
 	
@@ -207,16 +231,4 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		}
 		return result;
 	} // end fitnessPop()
-	
-	public String toString() {
-		String result = "";
-		for (int i = 0; i < population.length; i++) {
-			for (int j = 0; j < population[i].length; j++) {
-				result += population[i][j] + " ";
-			}
-			result += "\n";
-		}
-		
-		return result;
-	} // end toString()
 }
