@@ -71,20 +71,9 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 			iterate();
 		}
 		executor.shutdown();
+		
 		NeuralNetwork[] results = generateNetworks(population);
-		double[] fitness = this.fitnessPop(results, learningData);
-		
-		// find the best network
-		double min = Double.MAX_VALUE;
-		int minIndex = 0;
-		for (int i = 0; i < fitness.length; i++) {
-			if (fitness[i] < min) {
-				minIndex = i;
-				min = fitness[i];
-			}
-		}
-		
-		return results[minIndex];
+		return bestNN(results, learningData);
 	}
 	
 	/**
@@ -99,19 +88,9 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		
 		// find the best network
 		NeuralNetwork[] results = generateNetworks(population);
-		double[] fitness = this.fitnessPop(results, learningData);
-		double min = Double.MAX_VALUE;
-		int minIndex = 0;
-		for (int i = 0; i < fitness.length; i++) {
-			if (fitness[i] < min) {
-				minIndex = i;
-				min = fitness[i];
-			}
-		}
-		
-		return results[minIndex];
+		return bestNN(results, learningData);
 	}
-	
+
 	/**
 	 * Transition the population to it's next iteration
 	 * @return Minimum error of the new population
@@ -239,4 +218,26 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		}
 		return result;
 	} // end fitnessPop()
+	
+	/**
+	 * Find the best neural network out of an array of neural networks, given
+	 * the learning data
+	 * @param networks Array of learning networks
+	 * @param learningData Data for networks to learn and evaluate from
+	 * @return The best neural network in the given array
+	 */
+	private NeuralNetwork bestNN(NeuralNetwork[] networks, DataSet learningData) {
+		// find the best network
+		double[] fitness = this.fitnessPop(networks, learningData);
+		double min = Double.MAX_VALUE;
+		int minIndex = 0;
+		for (int i = 0; i < fitness.length; i++) {
+			if (fitness[i] < min) {
+				minIndex = i;
+				min = fitness[i];
+			}
+		}
+		
+		return networks[minIndex];
+	}
 }
