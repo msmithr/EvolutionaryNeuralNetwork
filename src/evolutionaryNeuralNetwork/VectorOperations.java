@@ -1,8 +1,9 @@
 package evolutionaryNeuralNetwork;
 
 /**
- * Static class containing simple vector operations
+ * Static class containing simple vector and matrix operations
  */
+
 public class VectorOperations {
 	
 	/**

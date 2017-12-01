@@ -8,14 +8,20 @@ public class Driver {
 	public static void main(String[] args) {
 
 		DataSet learningData = new DataSet(13, 3);
-		addData(learningData);
+		addWineData(learningData);
+		learningData.normalize();
                 
-        GeneticAlgorithm GA = new GeneticAlgorithm(1, 1, 3, 15, 500, 0.7, 0.1, 2, learningData, ActivationFunction.STEP);
-        NeuralNetwork result = GA.optimize(100);
+        GeneticAlgorithm GA = new GeneticAlgorithm(13, 3, 3, 10, 200, 0.7, 0.4, 4, learningData, ActivationFunction.SIGMOID);
+        NeuralNetwork result = GA.optimizeUntil(2);
         
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.1})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.3})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.8})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.83,1.57,2.62,20,115,2.95,3.4,.4,1.72,6.6,1.13,2.57,1130})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {14.19,1.59,2.48,16.5,108,3.3,3.93,.32,1.86,8.7,1.23,2.82,1680})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {11.64,2.06,2.46,21.6,84,1.95,1.69,.48,1.35,2.8,1,2.75,680})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.08,1.33,2.3,23.6,70,2.2,1.59,.42,1.38,1.74,1.07,3.21,625})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.08,1.83,2.32,18.5,81,1.6,1.5,.52,1.64,2.4,1.08,2.27,480})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.69,3.26,2.54,20,107,1.83,.56,.5,.8,5.88,.96,1.82,680})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.85,3.27,2.58,22,106,1.65,.6,.6,.96,5.58,.87,2.11,570})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.96,3.45,2.35,18.5,106,1.39,.7,.4,.94,5.28,.68,1.75,675})));
         
 	}
 	
@@ -26,6 +32,8 @@ public class Driver {
 		learningData.addData(new double[] {0.7}, new double[] {1});
 		learningData.addData(new double[] {0.9}, new double[] {1});
 		learningData.addData(new double[] {1}, new double[] {1});
+		
+        System.out.println(new double[] {14.3,1.92,2.72,20,120,2.8,3.14,.33,1.97,6.2,1.07,2.65,1280});
 	}
 	
 	private static void addWineData(DataSet learningData) {
@@ -45,9 +53,6 @@ public class Driver {
         learningData.addData(new double[] {14.75,1.73,2.39,11.4,91,3.1,3.69,.43,2.81,5.4,1.25,2.73,1150}, new double[] {1, 0, 0});
         learningData.addData(new double[] {14.38,1.87,2.38,12,102,3.3,3.64,.29,2.96,7.5,1.2,3,1547}, new double[] {1, 0, 0});
         learningData.addData(new double[] {13.63,1.81,2.7,17.2,112,2.85,2.91,.3,1.46,7.3,1.28,2.88,1310}, new double[] {1, 0, 0});
-        learningData.addData(new double[] {14.3,1.92,2.72,20,120,2.8,3.14,.33,1.97,6.2,1.07,2.65,1280}, new double[] {1, 0, 0});
-        learningData.addData(new double[] {13.83,1.57,2.62,20,115,2.95,3.4,.4,1.72,6.6,1.13,2.57,1130}, new double[] {1, 0, 0});
-        learningData.addData(new double[] {14.19,1.59,2.48,16.5,108,3.3,3.93,.32,1.86,8.7,1.23,2.82,1680}, new double[] {1, 0, 0});
         learningData.addData(new double[] {13.64,3.1,2.56,15.2,116,2.7,3.03,.17,1.66,5.1,.96,3.36,845}, new double[] {1, 0, 0});
         learningData.addData(new double[] {14.06,1.63,2.28,16,126,3,3.17,.24,2.1,5.65,1.09,3.71,780}, new double[] {1, 0, 0});
         learningData.addData(new double[] {12.93,3.8,2.65,18.6,102,2.41,2.41,.25,1.98,4.5,1.03,3.52,770}, new double[] {1, 0, 0});
@@ -117,9 +122,6 @@ public class Driver {
         learningData.addData(new double[] {12.67,.98,2.24,18,99,2.2,1.94,.3,1.46,2.62,1.23,3.16,450}, new double[] {0, 1, 0});
         learningData.addData(new double[] {12.16,1.61,2.31,22.8,90,1.78,1.69,.43,1.56,2.45,1.33,2.26,495}, new double[] {0, 1, 0});
         learningData.addData(new double[] {11.65,1.67,2.62,26,88,1.92,1.61,.4,1.34,2.6,1.36,3.21,562}, new double[] {0, 1, 0});
-        learningData.addData(new double[] {11.64,2.06,2.46,21.6,84,1.95,1.69,.48,1.35,2.8,1,2.75,680}, new double[] {0, 1, 0});
-        learningData.addData(new double[] {12.08,1.33,2.3,23.6,70,2.2,1.59,.42,1.38,1.74,1.07,3.21,625}, new double[] {0, 1, 0});
-        learningData.addData(new double[] {12.08,1.83,2.32,18.5,81,1.6,1.5,.52,1.64,2.4,1.08,2.27,480}, new double[] {0, 1, 0});
         learningData.addData(new double[] {12,1.51,2.42,22,86,1.45,1.25,.5,1.63,3.6,1.05,2.65,450}, new double[] {0, 1, 0});
         learningData.addData(new double[] {12.69,1.53,2.26,20.7,80,1.38,1.46,.58,1.62,3.05,.96,2.06,495}, new double[] {0, 1, 0});
         learningData.addData(new double[] {12.29,2.83,2.22,18,88,2.45,2.25,.25,1.99,2.15,1.15,3.3,290}, new double[] {0, 1, 0});
@@ -190,9 +192,6 @@ public class Driver {
         learningData.addData(new double[] {14.34,1.68,2.7,25,98,2.8,1.31,.53,2.7,13,.57,1.96,660}, new double[] {0, 0, 1});
         learningData.addData(new double[] {13.48,1.67,2.64,22.5,89,2.6,1.1,.52,2.29,11.75,.57,1.78,620}, new double[] {0, 0, 1});
         learningData.addData(new double[] {12.36,3.83,2.38,21,88,2.3,.92,.5,1.04,7.65,.56,1.58,520}, new double[] {0, 0, 1});
-        learningData.addData(new double[] {13.69,3.26,2.54,20,107,1.83,.56,.5,.8,5.88,.96,1.82,680}, new double[] {0, 0, 1});
-        learningData.addData(new double[] {12.85,3.27,2.58,22,106,1.65,.6,.6,.96,5.58,.87,2.11,570}, new double[] {0, 0, 1});
-        learningData.addData(new double[] {12.96,3.45,2.35,18.5,106,1.39,.7,.4,.94,5.28,.68,1.75,675}, new double[] {0, 0, 1});
         learningData.addData(new double[] {13.78,2.76,2.3,22,90,1.35,.68,.41,1.03,9.58,.7,1.68,615}, new double[] {0, 0, 1});
         learningData.addData(new double[] {13.73,4.36,2.26,22.5,88,1.28,.47,.52,1.15,6.62,.78,1.75,520}, new double[] {0, 0, 1});
         learningData.addData(new double[] {13.45,3.7,2.6,23,111,1.7,.92,.43,1.46,10.68,.85,1.56,695}, new double[] {0, 0, 1});

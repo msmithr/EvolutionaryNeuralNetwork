@@ -3,7 +3,7 @@ package evolutionaryNeuralNetwork;
 import java.util.Random;
 import java.util.concurrent.*;
 
-public class WorkerThread implements Callable<Double[]> {
+public class WorkerTask implements Callable<Double[]> {
 
 	private double crossoverProbability;
 	private double mutationProbability;
@@ -18,7 +18,7 @@ public class WorkerThread implements Callable<Double[]> {
 	private int nGenes;
 	private ActivationFunction af;
 	
-	public WorkerThread(int nInputs, int nOutputs, int nNeurons, int nLayers, 
+	public WorkerTask(int nInputs, int nOutputs, int nNeurons, int nLayers, 
 			double crossoverProbability, double mutationProbability, int tournSize, 
 			DataSet learningData, ActivationFunction af) 
 	{
@@ -59,6 +59,8 @@ public class WorkerThread implements Callable<Double[]> {
 		if (r.nextDouble() < mutationProbability) {
 			child = mutation(child);
 		}
+		
+		// convert array of primitives to array of objects
 		Double[] result = new Double[child.length];
 		for (int i = 0; i < child.length; i++) {
 			result[i] = child[i];
@@ -163,7 +165,7 @@ public class WorkerThread implements Callable<Double[]> {
 	private double fitness(double[] chromosome, DataSet learningData) {
 		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons, af);
 		return fitness(nn, learningData);
-	}
+	} // end fitness()
 	
 
 }

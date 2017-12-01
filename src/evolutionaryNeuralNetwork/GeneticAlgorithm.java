@@ -1,8 +1,8 @@
 package evolutionaryNeuralNetwork;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -20,7 +20,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	private double[][] population;
 	private DataSet learningData;
 	private ExecutorService executor;
-	private ArrayList<WorkerThread> threads;
+	private ArrayList<WorkerTask> tasks;
 	private ActivationFunction af;
 	
 	/**
@@ -50,9 +50,10 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		this.af = af;
 		
-		this.threads = new ArrayList<WorkerThread>();
+		// initialize the tasks
+		this.tasks = new ArrayList<WorkerTask>();
 		for (int i = 0; i < popSize; i++) {
-			threads.add(new WorkerThread(nInputs, nOutputs, nNeurons, 
+			tasks.add(new WorkerTask(nInputs, nOutputs, nNeurons, 
 					nLayers, crossoverProbability, mutationProbability,
 					tournSize, learningData, af));
 		}
@@ -113,60 +114,52 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	
 	/**
 	 * Transition the population to it's next iteration
-	 * @param population 
+	 * @return Minimum error of the new population
 	 */
 	private double iterate() {
 		double[][] newPopulation = new double[population.length][chromosomeLength];
-		WorkerThread.setPopulation(population);
+		WorkerTask.setPopulation(population);
 		List<Future<Double[]>> result = null;
 		int index = 0;
 		double[] child;
 		
-		while (index < popSize) {
+		// create all of the children using the thread pool
+		try {
+			result = executor.invokeAll(tasks);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return -1;
+		}
+		
+		// repopulate
+		for (Future<Double[]> i : result) {
 			try {
-				result = executor.invokeAll(threads);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				// convert the array of objects to an array of primitives
+				child = Arrays.stream(i.get()).mapToDouble(Double::doubleValue).toArray();
+				newPopulation[index++] = child;
+			} catch (Exception e) {
 				e.printStackTrace();
-			}
-			
-			for (Future<Double[]> i : result) {
-				try {
-					child = new double[chromosomeLength];
-					Double[] temp = i.get();
-					for (int j = 0; j < temp.length; j++) {
-						child[j] = temp[j];
-					}
-					newPopulation[index++] = child;
-					//System.out.println(VectorOperations.toString(child));
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return -1;
 			}
 		}
 		
 		this.population = newPopulation;
 		
+		// find the min fitness and return it
 		double minFitness = Double.MAX_VALUE;
 		for (int i = 0; i < popSize; i++) {
 			if (fitness(newPopulation[i], learningData) < minFitness) {
 				minFitness = fitness(newPopulation[i], learningData);
 			}
 		}
+		
+		// shuffle the data for better learnings
 		learningData.shuffle();
+
 		System.out.println(minFitness);
 		return minFitness;
 
 	} // end iterate()
-	
-	private double fitness(double[] chromosome, DataSet learningData) {
-		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons, af);
-		return fitness(nn, learningData);
-	}
 	
 	/**
 	 * Generates a random chromosome
@@ -182,7 +175,8 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	
 	/**
 	 * Generates a set of neural networks from a population of chromosomes
-	 * @param population 
+	 * @param population Population of chromosomes
+	 * @return An array of neural networks represented by the population
 	 */
 	private NeuralNetwork[] generateNetworks(double[][] population) {
 		NeuralNetwork[] networks = new NeuralNetwork[popSize];
@@ -198,12 +192,14 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	 * @param learningData Data to learn from
 	 * @return fitness of the network
 	 */
-	private double fitness(NeuralNetwork network, DataSet learningData) {
+	public double fitness(NeuralNetwork network, DataSet learningData) {
 		double[] activationResult;
 		double[] inputs;
 		double[] expectedOutputs;
 		double error = 0;
 		double sumSquaredErrors = 0;
+
+		// fitness: sum of squared errors
 		for (int i = 0; i < learningData.getSize(); i++) {
 			inputs = learningData.getInputs(i);
 			expectedOutputs = learningData.getOutputs(i);
@@ -214,8 +210,20 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 				sumSquaredErrors += (error * error);
 			}
 		}
+
 		return sumSquaredErrors;
 		//return fitness;
+	} // end fitness()
+	
+	/**
+	 * Calculate the fitness of a given chromosome given learning data
+	 * @param chromosome Chromosome of network to calculate fitness of
+	 * @param learningData Data to learn from
+	 * @return Fitness of the chromosome
+	 */
+	public double fitness(double[] chromosome, DataSet learningData) {
+		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons, af);
+		return fitness(nn, learningData);
 	} // end fitness()
 	
 	/**

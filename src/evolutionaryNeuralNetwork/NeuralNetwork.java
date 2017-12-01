@@ -2,7 +2,7 @@ package evolutionaryNeuralNetwork;
 
 import evolutionaryNeuralNetworkInterfaces.NeuralNetworkInterface;
 
-public class NeuralNetwork implements NeuralNetworkInterface{
+public class NeuralNetwork implements NeuralNetworkInterface {
 	private double[][][] weightMatrices;
 	private double[][] thresholdVectors;
 	private ActivationFunction af;
@@ -82,16 +82,5 @@ public class NeuralNetwork implements NeuralNetworkInterface{
 		
 		return feedForward(inputs);
 	} // end feedForward()
-	
-	public String toString() {
-		String result = "";
-		for (int i = 0; i < weightMatrices.length; i++) {
-			result += VectorOperations.toString(weightMatrices[i]);
-			result += "\n";
-			result += VectorOperations.toString(new double[][] {thresholdVectors[i]});
-			result += "\n";
-		}
-		return result;
-	} // end toString()
 	
 } // end class
