@@ -9,11 +9,11 @@ public class Driver {
 
 		DataSet learningData = new DataSet(13, 3);
 		addWineData(learningData);
-		learningData.normalize();
                 
-        GeneticAlgorithm GA = new GeneticAlgorithm(13, 3, 3, 10, 200, 0.7, 0.4, 4, learningData, ActivationFunction.SIGMOID);
-        NeuralNetwork result = GA.optimizeUntil(2);
+        GeneticAlgorithm GA = new GeneticAlgorithm(13, 3, 3, 10, 50, 0.7, 0.4, 0.2, 4, learningData, ActivationFunction.SIGMOID);
+        NeuralNetwork result = GA.optimizeUntil(-1);
         
+        /*
         System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.83,1.57,2.62,20,115,2.95,3.4,.4,1.72,6.6,1.13,2.57,1130})));
         System.out.println(VectorOperations.toString(result.feedForward(new double[] {14.19,1.59,2.48,16.5,108,3.3,3.93,.32,1.86,8.7,1.23,2.82,1680})));
         System.out.println(VectorOperations.toString(result.feedForward(new double[] {11.64,2.06,2.46,21.6,84,1.95,1.69,.48,1.35,2.8,1,2.75,680})));
@@ -22,7 +22,7 @@ public class Driver {
         System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.69,3.26,2.54,20,107,1.83,.56,.5,.8,5.88,.96,1.82,680})));
         System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.85,3.27,2.58,22,106,1.65,.6,.6,.96,5.58,.87,2.11,570})));
         System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.96,3.45,2.35,18.5,106,1.39,.7,.4,.94,5.28,.68,1.75,675})));
-        
+        */
 	}
 	
 	private static void addData(DataSet learningData) {

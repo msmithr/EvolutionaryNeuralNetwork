@@ -17,7 +17,6 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	private int nNeurons;
 	private int nLayers;
 	private Random r;
-	private double[][] population;
 	private DataSet learningData;
 	private ExecutorService executor;
 	private ArrayList<WorkerTask> tasks;
@@ -35,8 +34,8 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	 * @param learningData DataSet containing data to learn from
 	 */
 	public GeneticAlgorithm(int nInputs, int nOutputs, int nLayers, int nNeurons, 
-			int popSize, double crossoverProbability, double mutationProbability, 
-			int tournSize, DataSet learningData, ActivationFunction af) {
+			int popSize, double crossoverProbability, double mutationProbability, double migrationProbability, 
+			 int tournSize, DataSet learningData, ActivationFunction af) {
 		
 		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nOutputs;
 		
@@ -52,17 +51,13 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		
 		// initialize the tasks
 		this.tasks = new ArrayList<WorkerTask>();
-		for (int i = 0; i < popSize; i++) {
+		for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
 			tasks.add(new WorkerTask(nInputs, nOutputs, nNeurons, 
-					nLayers, crossoverProbability, mutationProbability,
+					nLayers, popSize, crossoverProbability, mutationProbability, migrationProbability,
 					tournSize, learningData, af));
 		}
 		
-		// initialize population
-		this.population = new double[popSize][];
-		for (int i = 0; i < popSize; i++) {
-			population[i] = randomChromosome();
-		}
+		WorkerTask.setIslands(tasks);
 		
 	} // end constructor
 	
@@ -71,9 +66,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 			iterate();
 		}
 		executor.shutdown();
-		
-		NeuralNetwork[] results = generateNetworks(population);
-		return bestNN(results, learningData);
+		return null;
 	}
 	
 	/**
@@ -84,11 +77,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	public NeuralNetwork optimizeUntil(double error) {
 		while (iterate() > error) ;
 		executor.shutdown();
-		
-		
-		// find the best network
-		NeuralNetwork[] results = generateNetworks(population);
-		return bestNN(results, learningData);
+		return null;
 	}
 
 	/**
@@ -96,13 +85,10 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	 * @return Minimum error of the new population
 	 */
 	private double iterate() {
-		double[][] newPopulation = new double[population.length][chromosomeLength];
-		WorkerTask.setPopulation(population);
-		List<Future<Double[]>> result = null;
-		int index = 0;
-		double[] child;
+		double minFitness = Double.MAX_VALUE;
+		double fitness;
+		List<Future<Double>> result = null;
 		
-		// create all of the children using the thread pool
 		try {
 			result = executor.invokeAll(tasks);
 		} catch (InterruptedException e) {
@@ -110,47 +96,21 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 			return -1;
 		}
 		
-		// repopulate
-		for (Future<Double[]> i : result) {
-			try {
-				// convert the array of objects to an array of primitives
-				child = Arrays.stream(i.get()).mapToDouble(Double::doubleValue).toArray();
-				newPopulation[index++] = child;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return -1;
+		try {
+			for (Future<Double> f : result) {
+				fitness = f.get();
+				if (fitness < minFitness) {
+					minFitness = fitness;
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
 		}
-		
-		this.population = newPopulation;
-		
-		// find the min fitness and return it
-		double minFitness = Double.MAX_VALUE;
-		for (int i = 0; i < popSize; i++) {
-			if (fitness(newPopulation[i], learningData) < minFitness) {
-				minFitness = fitness(newPopulation[i], learningData);
-			}
-		}
-		
-		// shuffle the data for better learnings
-		learningData.shuffle();
 
 		System.out.println(minFitness);
 		return minFitness;
-
 	} // end iterate()
-	
-	/**
-	 * Generates a random chromosome
-	 * @return Randomly generated chromosome with elements between -0.5 and 0.5
-	 */
-	private double[] randomChromosome() {
-		double[] newChromosome = new double[chromosomeLength];
-		for (int i = 0; i < chromosomeLength; i++) {
-			newChromosome[i] = r.nextDouble() - 0.5;
-		}
-		return newChromosome;
-	} // end randomChromosome()
 	
 	/**
 	 * Generates a set of neural networks from a population of chromosomes

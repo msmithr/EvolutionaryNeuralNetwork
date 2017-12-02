@@ -1,14 +1,17 @@
 package evolutionaryNeuralNetwork;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.*;
 
-public class WorkerTask implements Callable<Double[]> {
+public class WorkerTask implements Callable<Double> {
 
 	private double crossoverProbability;
 	private double mutationProbability;
+	private double migrationProbability;
+	private double migrationSize;
 	private int tournSize;
-	private static double[][] population;
+	private double[][] population;
 	private DataSet learningData;
 	private Random r;
 	private int nInputs;
@@ -16,14 +19,21 @@ public class WorkerTask implements Callable<Double[]> {
 	private int nNeurons;
 	private int nLayers;
 	private int nGenes;
+	private int chromosomeLength;
+	private int popSize;
 	private ActivationFunction af;
+	private ConcurrentLinkedDeque<Double[]> migrationQueue;
+	private static ArrayList<WorkerTask> islands;
 	
-	public WorkerTask(int nInputs, int nOutputs, int nNeurons, int nLayers, 
-			double crossoverProbability, double mutationProbability, int tournSize, 
-			DataSet learningData, ActivationFunction af) 
+	public WorkerTask(int nInputs, int nOutputs, int nNeurons, int nLayers, int popSize, 
+			double crossoverProbability, double mutationProbability, double migrationProbability,
+			int tournSize, DataSet learningData, ActivationFunction af) 
 	{
+		this.chromosomeLength = nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nOutputs;
 		this.crossoverProbability = crossoverProbability;
 		this.mutationProbability = mutationProbability;
+		this.migrationProbability = migrationProbability;
+		this.migrationSize = migrationSize;
 		this.tournSize = tournSize;
 		this.learningData = learningData;
 		this.nGenes = (nNeurons * nLayers) + nOutputs;
@@ -32,41 +42,78 @@ public class WorkerTask implements Callable<Double[]> {
 		this.nNeurons = nNeurons;
 		this.nLayers = nLayers;
 		this.af = af;
+		this.popSize = popSize;
 		r = new Random();
+		this.migrationQueue = new ConcurrentLinkedDeque<Double[]>();
+		
+		
+		population = new double[popSize][];
+		for (int i = 0; i < popSize; i++) {
+			population[i] = randomChromosome();
+		}
 	}
 	
-	public static void setPopulation(double[][] pop) {
-		population = pop;
+	public static void setIslands(ArrayList<WorkerTask> iArray) {
+		islands = iArray;
 	}
-	
+
 	@Override
-	public Double[] call() throws Exception {
+	public Double call() throws Exception {
 		double[] child;
 		double[] parent1;
 		double[] parent2;
+		int index = 0;
+		double[][] newPopulation = new double[popSize][];
 		
-		parent1 = tournamentSelection(population);
-		parent2 = tournamentSelection(population);
-		
-		// crossover
-		if (r.nextDouble() < crossoverProbability) {
-			child = crossover(parent1, parent2);
-		} else {
-			child = parent1.clone();
+		while (index < popSize) {
+			if (!migrationQueue.isEmpty()) {
+				child = new double[chromosomeLength];
+				Double[] child_object = migrationQueue.getFirst();
+				for (int i = 0; i < chromosomeLength; i++) {
+					child[i] = child_object[i];
+				}
+				newPopulation[index++] = child;
+				continue;
+			}
+			
+			parent1 = tournamentSelection(population);
+			parent2 = tournamentSelection(population);
+			
+			// crossover
+			if (r.nextDouble() < crossoverProbability) {
+				child = crossover(parent1, parent2);
+			} else {
+				child = parent1.clone();
+			}
+			
+			// mutation
+			if (r.nextDouble() < mutationProbability) {
+				child = mutation(child);
+			}
+			
+			if (r.nextDouble() < migrationProbability ) {
+				int selection = r.nextInt(islands.size());
+				if (islands.get(selection) == this) {
+					selection = (selection + 1) % islands.size();
+				}
+				
+			}
+			
+			newPopulation[index++] = child;
 		}
 		
-		// mutation
-		if (r.nextDouble() < mutationProbability) {
-			child = mutation(child);
+		population = newPopulation;
+		
+		// find the min fitness and return it
+		Double minFitness = Double.MAX_VALUE;
+		for (int i = 0; i < popSize; i++) {
+			if (fitness(newPopulation[i], learningData) < minFitness) {
+				minFitness = fitness(newPopulation[i], learningData);
+			}
 		}
 		
-		// convert array of primitives to array of objects
-		Double[] result = new Double[child.length];
-		for (int i = 0; i < child.length; i++) {
-			result[i] = child[i];
-		}
-		
-		return result;
+		learningData.shuffle(); // shuffle the data for better learnings
+		return minFitness;
 	}
 	
 	private double[] tournamentSelection(double[][] population) {
@@ -162,10 +209,32 @@ public class WorkerTask implements Callable<Double[]> {
 		//return fitness;
 	} // end fitness()
 	
+	public void migrate(double[] child) {
+		Double[] toAdd = new Double[child.length];
+		for (int i = 0; i < child.length; i++) {
+			toAdd[i] = child[i];
+		}
+		migrationQueue.addLast(toAdd);
+	}
+	
+	
+	
 	private double fitness(double[] chromosome, DataSet learningData) {
 		NeuralNetwork nn = new NeuralNetwork(chromosome, nInputs, nOutputs, nLayers, nNeurons, af);
 		return fitness(nn, learningData);
 	} // end fitness()
+	
+	/**
+	 * Generates a random chromosome
+	 * @return Randomly generated chromosome with elements between -0.5 and 0.5
+	 */
+	private double[] randomChromosome() {
+		double[] newChromosome = new double[chromosomeLength];
+		for (int i = 0; i < chromosomeLength; i++) {
+			newChromosome[i] = r.nextDouble() - 0.5;
+		}
+		return newChromosome;
+	} // end randomChromosome()
 	
 
 }
