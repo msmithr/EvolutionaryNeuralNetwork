@@ -22,6 +22,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	private ExecutorService executor;
 	private ArrayList<WorkerTask> tasks;
 	private ActivationFunction af;
+	public int iterationNumber = 1;
 	
 	/**
 	 * Genetic algorithm for neural network optimization
@@ -135,7 +136,8 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		// shuffle the data for better learnings
 		learningData.shuffle();
 
-		System.out.println(minFitness);
+		System.out.println("Iteration " + iterationNumber + ": " + minFitness);
+		iterationNumber++;
 		return minFitness;
 
 	} // end iterate()

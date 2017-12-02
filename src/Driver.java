@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 import evolutionaryNeuralNetwork.ActivationFunction;
 import evolutionaryNeuralNetwork.DataSet;
 import evolutionaryNeuralNetwork.GeneticAlgorithm;
@@ -5,24 +7,41 @@ import evolutionaryNeuralNetwork.NeuralNetwork;
 import evolutionaryNeuralNetwork.VectorOperations;
 
 public class Driver {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
+		NeuralNetwork result = new NeuralNetwork("testfile");
+	
 		DataSet learningData = new DataSet(13, 3);
 		addWineData(learningData);
 		learningData.normalize();
+		/*
                 
-        GeneticAlgorithm GA = new GeneticAlgorithm(13, 3, 3, 10, 200, 0.7, 0.4, 4, learningData, ActivationFunction.SIGMOID);
-        NeuralNetwork result = GA.optimizeUntil(2);
+        GeneticAlgorithm GA = new GeneticAlgorithm(13, 3, 3, 20, 100, 0.7, 0.3, 4, learningData, ActivationFunction.STEP);
+        NeuralNetwork result = GA.optimizeUntil(100);
         
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.83,1.57,2.62,20,115,2.95,3.4,.4,1.72,6.6,1.13,2.57,1130})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {14.19,1.59,2.48,16.5,108,3.3,3.93,.32,1.86,8.7,1.23,2.82,1680})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {11.64,2.06,2.46,21.6,84,1.95,1.69,.48,1.35,2.8,1,2.75,680})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.08,1.33,2.3,23.6,70,2.2,1.59,.42,1.38,1.74,1.07,3.21,625})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.08,1.83,2.32,18.5,81,1.6,1.5,.52,1.64,2.4,1.08,2.27,480})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.69,3.26,2.54,20,107,1.83,.56,.5,.8,5.88,.96,1.82,680})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.85,3.27,2.58,22,106,1.65,.6,.6,.96,5.58,.87,2.11,570})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.96,3.45,2.35,18.5,106,1.39,.7,.4,.94,5.28,.68,1.75,675})));
+        try {
+			result.save("testfile");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
         
+        /*
+        System.out.println(VectorOperations.toStrigfg(result.feedForward(new double[] {0.3})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.5})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.7})));
+        */
+        
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.83,1.57,2.62,20,115,2.95,3.4,.4,1.72,6.6,1.13,2.57,1130}, learningData)));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {14.19,1.59,2.48,16.5,108,3.3,3.93,.32,1.86,8.7,1.23,2.82,1680}, learningData)));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {11.64,2.06,2.46,21.6,84,1.95,1.69,.48,1.35,2.8,1,2.75,680}, learningData)));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.08,1.33,2.3,23.6,70,2.2,1.59,.42,1.38,1.74,1.07,3.21,625}, learningData)));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.08,1.83,2.32,18.5,81,1.6,1.5,.52,1.64,2.4,1.08,2.27,480}, learningData)));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.69,3.26,2.54,20,107,1.83,.56,.5,.8,5.88,.96,1.82,680}, learningData)));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.85,3.27,2.58,22,106,1.65,.6,.6,.96,5.58,.87,2.11,570}, learningData)));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.96,3.45,2.35,18.5,106,1.39,.7,.4,.94,5.28,.68,1.75,675}, learningData)));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {11.81,2.12,2.74,21.5,134,1.6,.99,.14,1.56,2.5,.95,2.26,625}, learningData)));
 	}
 	
 	private static void addData(DataSet learningData) {
@@ -34,6 +53,13 @@ public class Driver {
 		learningData.addData(new double[] {1}, new double[] {1});
 		
         System.out.println(new double[] {14.3,1.92,2.72,20,120,2.8,3.14,.33,1.97,6.2,1.07,2.65,1280});
+	}
+	
+	public static void addSinData(DataSet learningData) {
+		for (int i = 0; i < 360; i+=2) {
+			learningData.addData(new double[] {i}, new double[] {Math.sin(Math.toRadians(i))});
+		}
+		
 	}
 	
 	private static void addWineData(DataSet learningData) {

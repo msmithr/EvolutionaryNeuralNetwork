@@ -1,10 +1,21 @@
 package evolutionaryNeuralNetwork;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import evolutionaryNeuralNetworkInterfaces.NeuralNetworkInterface;
 
 public class NeuralNetwork implements NeuralNetworkInterface {
 	private double[][][] weightMatrices;
 	private double[][] thresholdVectors;
+	private double[] chromosome;
+	private int nInputs;
+	private int nOutputs;
+	private int nLayers;
+	private int nNeurons;
 	private ActivationFunction af;
 	
 	/**
@@ -16,8 +27,46 @@ public class NeuralNetwork implements NeuralNetworkInterface {
 	 * @param nNeurons Number of neurons per hidden layer
 	 */
 	public NeuralNetwork(double[] chromosome, int nInputs, int nOutputs, int nLayers, int nNeurons, ActivationFunction af) {
-		weightMatrices = new double[nLayers + 1][][];
-		thresholdVectors = new double[nLayers + 1][];
+		initialize(chromosome, nInputs, nOutputs, nLayers, nNeurons, af);
+	} // end constructor
+	
+	public NeuralNetwork(String filename) throws IOException {
+		FileReader filereader = new FileReader(filename);
+		BufferedReader bufferedReader = new BufferedReader(filereader);
+		
+		String nInputsString = bufferedReader.readLine();
+		String nOutputsString = bufferedReader.readLine();
+		String nLayersString = bufferedReader.readLine();
+		String nNeuronsString = bufferedReader.readLine();
+		String afString = bufferedReader.readLine();
+		String chromosomeString = bufferedReader.readLine();
+		
+		bufferedReader.close();
+		
+		int nInputs = Integer.parseInt(nInputsString);
+		int nOutputs = Integer.parseInt(nOutputsString);
+		int nLayers = Integer.parseInt(nLayersString);
+		int nNeurons = Integer.parseInt(nNeuronsString);
+		ActivationFunction af = ActivationFunction.valueOf(afString);
+		String[] chromosomeArray = chromosomeString.split(" ");
+		
+		double[] chromosome = new double[nNeurons*(nInputs + nNeurons*(nLayers-1) + nOutputs + nLayers) + nOutputs];
+		
+		for (int i = 0; i < chromosome.length; i++) {
+			chromosome[i] = Double.parseDouble(chromosomeArray[i]);
+		}
+		
+		initialize(chromosome, nInputs, nOutputs, nLayers, nNeurons, af);
+	}
+	
+	private void initialize(double[] chromosome, int nInputs, int nOutputs, int nLayers, int nNeurons, ActivationFunction af) {
+		this.weightMatrices = new double[nLayers + 1][][];
+		this.thresholdVectors = new double[nLayers + 1][];
+		this.chromosome = chromosome;
+		this.nInputs = nInputs;
+		this.nOutputs = nOutputs;
+		this.nLayers = nLayers;
+		this.nNeurons = nNeurons;
 		this.af = af;
 		
 		int chromosomeIndex = 0; // current index in the chromosome
@@ -41,8 +90,7 @@ public class NeuralNetwork implements NeuralNetworkInterface {
 			curInputs = curOutputs;
 			curOutputs = i == nLayers-1 ? nOutputs : nNeurons;
 		} // end for
-		
-	} // end constructor
+	}
 	
 	public double[] feedForward(double[] inputs) {
 		double[] state = inputs;
@@ -82,5 +130,28 @@ public class NeuralNetwork implements NeuralNetworkInterface {
 		
 		return feedForward(inputs);
 	} // end feedForward()
+	
+	public void save(String filename) throws IOException {
+		FileWriter filewriter = new FileWriter(filename);
+		BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
+		String toWrite = "";
+		
+		toWrite += Integer.toString(nInputs) + '\n';
+		toWrite += Integer.toString(nOutputs) + '\n';
+		toWrite += Integer.toString(nLayers) + '\n';
+		toWrite += Integer.toString(nNeurons) + '\n';
+		toWrite += af;
+		
+		toWrite += '\n';
+		
+		for (int i = 0; i < chromosome.length; i++) {
+			toWrite += chromosome[i] + " ";
+		}
+		
+		toWrite += '\n';
+		
+		bufferedWriter.write(toWrite);
+		bufferedWriter.close();
+	}
 	
 } // end class
