@@ -127,18 +127,25 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		
 		// find the min fitness and return it
 		double minFitness = Double.MAX_VALUE;
+		double avgFitness = 0;
 		for (int i = 0; i < popSize; i++) {
-			if (fitness(newPopulation[i], learningData) < minFitness) {
-				minFitness = fitness(newPopulation[i], learningData);
+			double fitness = fitness(newPopulation[i], learningData);
+			if (fitness < minFitness) {
+				minFitness = fitness;
 			}
+			avgFitness += fitness/nOutputs;
 		}
+		
+		avgFitness /= popSize;
 		
 		// shuffle the data for better learnings
 		learningData.shuffle();
 
-		System.out.println("Iteration " + iterationNumber + ": " + minFitness);
+		System.out.println("Iteration " + iterationNumber);
+		System.out.println("\tBest: " + minFitness/nOutputs + "%");
+		System.out.println("\tAverage: " + avgFitness + "%");
 		iterationNumber++;
-		return minFitness;
+		return minFitness/nOutputs;
 
 	} // end iterate()
 	

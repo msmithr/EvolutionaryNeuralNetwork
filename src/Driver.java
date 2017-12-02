@@ -9,15 +9,15 @@ import evolutionaryNeuralNetwork.VectorOperations;
 public class Driver {
 	public static void main(String[] args) throws IOException {
 
-		NeuralNetwork result = new NeuralNetwork("testfile");
+		//NeuralNetwork result = new NeuralNetwork("testfile");
 	
 		DataSet learningData = new DataSet(13, 3);
 		addWineData(learningData);
 		learningData.normalize();
-		/*
+		
                 
         GeneticAlgorithm GA = new GeneticAlgorithm(13, 3, 3, 20, 100, 0.7, 0.3, 4, learningData, ActivationFunction.STEP);
-        NeuralNetwork result = GA.optimizeUntil(100);
+        NeuralNetwork result = GA.optimizeUntil(10);
         
         try {
 			result.save("testfile");
@@ -25,7 +25,7 @@ public class Driver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
+		
         
         /*
         System.out.println(VectorOperations.toStrigfg(result.feedForward(new double[] {0.3})));
