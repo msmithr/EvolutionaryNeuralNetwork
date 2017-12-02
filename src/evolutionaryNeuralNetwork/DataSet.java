@@ -50,7 +50,6 @@ public class DataSet implements DataSetInterface{
 		Collections.shuffle(data);
 	}
 	
-	
 	public void normalize() {
 		this.max = new double[nInputs];
 		this.min = new double[nInputs];

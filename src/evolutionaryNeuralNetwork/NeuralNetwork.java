@@ -30,6 +30,11 @@ public class NeuralNetwork implements NeuralNetworkInterface {
 		initialize(chromosome, nInputs, nOutputs, nLayers, nNeurons, af);
 	} // end constructor
 	
+	/**
+	 * Alternative constructor, loading NN parameters from a given file
+	 * @param filename Name of the file to load from
+	 * @throws IOException
+	 */
 	public NeuralNetwork(String filename) throws IOException {
 		FileReader filereader = new FileReader(filename);
 		BufferedReader bufferedReader = new BufferedReader(filereader);
