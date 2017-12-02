@@ -74,6 +74,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		executor.shutdown();
 		
 		NeuralNetwork[] results = generateNetworks(population);
+		
 		return bestNN(results, learningData);
 	}
 	
@@ -89,6 +90,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		
 		// find the best network
 		NeuralNetwork[] results = generateNetworks(population);
+		System.out.printf("\nCompleted in %d iterations\n\n", iterationNumber);
 		return bestNN(results, learningData);
 	}
 

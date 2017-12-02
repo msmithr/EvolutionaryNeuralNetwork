@@ -17,7 +17,7 @@ public class Driver {
 		
                 
         GeneticAlgorithm GA = new GeneticAlgorithm(13, 3, 3, 20, 100, 0.7, 0.3, 4, learningData, ActivationFunction.STEP);
-        NeuralNetwork result = GA.optimizeUntil(10);
+        NeuralNetwork result = GA.optimizeUntil(30);
         
         try {
 			result.save("testfile");
