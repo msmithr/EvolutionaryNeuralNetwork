@@ -1,29 +1,30 @@
 package evolutionaryNeuralNetwork;
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 
 public class DriverUI extends JFrame {
-
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField textFieldOutput;
 	private JTextField textFieldNInputs;
-	private JTextField textFieldNOutput;
+	private JTextField textFieldNOutputs;
 	private JTextField textFieldLayers;
 	private JTextField textFieldNeuronsLayer;
 	private JTextField textFieldPopSize;
-	private JTextField textFieldCossover;
+	private JTextField textFieldCrossover;
 	private JTextField textFieldMutation;
 	private JTextField textFieldTournamentSize;
 	private JTextField textFieldInput;
@@ -73,20 +74,43 @@ public class DriverUI extends JFrame {
 		contentPane.add(textFieldOutput);
 		textFieldOutput.setColumns(10);
 		
-		JComboBox comboBoxAF = new JComboBox();
-		comboBoxAF.setModel(new DefaultComboBoxModel(new String[] {"sigmoid", "step", "tanh", "sigmoid-step"}));
+		JComboBox<String> comboBoxAF = new JComboBox<String>();
+		comboBoxAF.setModel(new DefaultComboBoxModel<String>(new String[] {"sigmoid", "step", "tanh", "sigmoid-step"}));
 		comboBoxAF.setBounds(122, 303, 86, 20);
 		contentPane.add(comboBoxAF);
 		
 		JButton btnTrain = new JButton("Train");
 		btnTrain.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//textFieldLayers.setEditable(false);
+				
+				textFieldNInputs.setEditable(false);
+				textFieldNOutputs.setEditable(false);
+				textFieldLayers.setEditable(false);
+				textFieldNeuronsLayer.setEditable(false);
+				textFieldPopSize.setEditable(false);
+				textFieldCrossover.setEditable(false);
+				textFieldMutation.setEditable(false);
+				textFieldTournamentSize.setEditable(false);
+				comboBoxAF.setEditable(false);
+				
+				if (!validateInputs()) {
+					textFieldNInputs.setEditable(true);
+					textFieldNOutputs.setEditable(true);
+					textFieldLayers.setEditable(true);
+					textFieldNeuronsLayer.setEditable(true);
+					textFieldPopSize.setEditable(true);
+					textFieldCrossover.setEditable(true);
+					textFieldMutation.setEditable(true);
+					textFieldTournamentSize.setEditable(true);
+					comboBoxAF.setEditable(true);
+					JOptionPane.showMessageDialog(null, "Invalid Inputs");
+					return;
+				}
 				
 				String inputTemp = textFieldNInputs.getText();
 				int nInputs = Integer.parseInt(inputTemp);
 				
-				String outputTemp = textFieldNOutput.getText();
+				String outputTemp = textFieldNOutputs.getText();
 				int nOutputs = Integer.parseInt(outputTemp);
 				
 				String layerTemp = textFieldLayers.getText();
@@ -98,7 +122,7 @@ public class DriverUI extends JFrame {
 				String popTemp = textFieldPopSize.getText();
 				int popSize = Integer.parseInt(popTemp);
 				
-				String crossTemp = textFieldCossover.getText();
+				String crossTemp = textFieldCrossover.getText();
 				double crossoverPropability = Double.parseDouble(crossTemp);
 				
 				String mutantTemp = textFieldMutation.getText();
@@ -119,14 +143,29 @@ public class DriverUI extends JFrame {
 					af = ActivationFunction.SIGMOID_STEP;
 				}
 				
-				DataSet learningData = new DataSet(nInputs, nOutputs);
-				addData(learningData);
+				DataSet learningData;
+				try {
+					learningData = new DataSet("wineData", nInputs, nOutputs);
+				} catch (IOException e) {
+					e.printStackTrace();
+					return;
+				}
 				
 				GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
 						popSize, crossoverPropability, mutationPropability, 
 						tournSize, learningData, af);
 				
-				NeuralNetwork result = moon.optimize(30);
+				result = moon.optimize(50000);
+				
+				textFieldNInputs.setEditable(true);
+				textFieldNOutputs.setEditable(true);
+				textFieldLayers.setEditable(true);
+				textFieldNeuronsLayer.setEditable(true);
+				textFieldPopSize.setEditable(true);
+				textFieldCrossover.setEditable(true);
+				textFieldMutation.setEditable(true);
+				textFieldTournamentSize.setEditable(true);
+				comboBoxAF.setEditable(true);
 				
 			}
 		});
@@ -166,10 +205,10 @@ public class DriverUI extends JFrame {
 		contentPane.add(textFieldNInputs);
 		textFieldNInputs.setColumns(10);
 		
-		textFieldNOutput = new JTextField();
-		textFieldNOutput.setBounds(107, 106, 86, 20);
-		contentPane.add(textFieldNOutput);
-		textFieldNOutput.setColumns(10);
+		textFieldNOutputs = new JTextField();
+		textFieldNOutputs.setBounds(107, 106, 86, 20);
+		contentPane.add(textFieldNOutputs);
+		textFieldNOutputs.setColumns(10);
 		
 		textFieldLayers = new JTextField();
 		textFieldLayers.setText("1");
@@ -189,11 +228,11 @@ public class DriverUI extends JFrame {
 		contentPane.add(textFieldPopSize);
 		textFieldPopSize.setColumns(10);
 		
-		textFieldCossover = new JTextField();
-		textFieldCossover.setText(".75");
-		textFieldCossover.setBounds(122, 228, 86, 20);
-		contentPane.add(textFieldCossover);
-		textFieldCossover.setColumns(10);
+		textFieldCrossover = new JTextField();
+		textFieldCrossover.setText(".75");
+		textFieldCrossover.setBounds(122, 228, 86, 20);
+		contentPane.add(textFieldCrossover);
+		textFieldCrossover.setColumns(10);
 		
 		textFieldMutation = new JTextField();
 		textFieldMutation.setText(".2");
@@ -233,6 +272,50 @@ public class DriverUI extends JFrame {
 		btnQuery.setBounds(10, 36, 89, 23);
 		contentPane.add(btnQuery);
 	}
+	
+	private boolean validateInputs() {
+		String inputTemp = textFieldNInputs.getText();
+		int nInputs = Integer.parseInt(inputTemp);
+		
+		String outputTemp = textFieldNOutputs.getText();
+		int nOutputs = Integer.parseInt(outputTemp);
+		
+		String layerTemp = textFieldLayers.getText();
+		int nLayers = Integer.parseInt(layerTemp);
+		
+		String nLayerTemp = textFieldNeuronsLayer.getText();
+		int nNeurons = Integer.parseInt(nLayerTemp);
+		
+		String popTemp = textFieldPopSize.getText();
+		int popSize = Integer.parseInt(popTemp);
+		
+		String crossTemp = textFieldCrossover.getText();
+		double crossoverPropability = Double.parseDouble(crossTemp);
+		
+		String mutantTemp = textFieldMutation.getText();
+		double mutationPropability = Double.parseDouble(mutantTemp);
+		
+		String tournamentTemp = textFieldTournamentSize.getText();
+		int tournSize = Integer.parseInt(tournamentTemp);
+		
+		if (
+			nInputs <= 0 ||
+			nOutputs <= 0 ||
+			nLayers <= 0 ||
+			nNeurons <= 0 ||
+			popSize <= 0 ||
+			crossoverPropability < 0 ||
+			crossoverPropability > 1 ||
+			mutationPropability < 0 ||
+			mutationPropability > 1 ||
+			tournSize <= 0
+			) 
+		{
+			return false;
+		}
+		return true;	
+	}
+	
 	private static void addData(DataSet learningData) {
 		learningData.addData(new double[] {0.1}, new double[] {0});
 		learningData.addData(new double[] {0.3}, new double[] {0});
