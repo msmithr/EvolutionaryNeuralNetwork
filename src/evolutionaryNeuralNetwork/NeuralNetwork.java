@@ -2,7 +2,7 @@ package evolutionaryNeuralNetwork;
 
 import evolutionaryNeuralNetworkInterfaces.NeuralNetworkInterface;
 
-public class NeuralNetwork implements NeuralNetworkInterface{
+public class NeuralNetwork extends DriverUI implements NeuralNetworkInterface{
 	private double[][][] weightMatrices;
 	private double[][] thresholdVectors;
 	private ActivationFunction af;

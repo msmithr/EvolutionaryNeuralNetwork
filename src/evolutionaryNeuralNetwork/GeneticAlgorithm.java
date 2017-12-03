@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 
 import evolutionaryNeuralNetworkInterfaces.GeneticAlgorithmInterface;
 
-public class GeneticAlgorithm implements GeneticAlgorithmInterface{
+public class GeneticAlgorithm extends DriverUI implements GeneticAlgorithmInterface{
 	private int chromosomeLength; // number of doubles in the chromosomes
 	private int popSize;
 	private int nInputs;

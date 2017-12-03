@@ -1,3 +1,4 @@
+package evolutionaryNeuralNetwork;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
@@ -9,11 +10,13 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextArea;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class DriverUI extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField textFieldInput;
 	private JTextField textFieldOutput;
 	private JTextField textFieldNInputs;
 	private JTextField textFieldNOutput;
@@ -23,6 +26,10 @@ public class DriverUI extends JFrame {
 	private JTextField textFieldCossover;
 	private JTextField textFieldMutation;
 	private JTextField textFieldTournamentSize;
+	private JTextField textFieldInput;
+	
+	public NeuralNetwork result;
+	public GeneticAlgorithm moon;
 
 	/**
 	 * Launch the application.
@@ -46,32 +53,83 @@ public class DriverUI extends JFrame {
 	public DriverUI() {
 		setTitle("Evolutionary Neural Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 464, 395);
+		setBounds(100, 100, 490, 387);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblInput = new JLabel("Input");
-		lblInput.setBounds(10, 11, 46, 14);
-		contentPane.add(lblInput);
-		
-		textFieldInput = new JTextField();
-		textFieldInput.setBounds(46, 8, 120, 20);
-		contentPane.add(textFieldInput);
-		textFieldInput.setColumns(10);
+		JLabel lblDataEntry = new JLabel("Data Entry");
+		lblDataEntry.setBounds(221, 84, 52, 14);
+		contentPane.add(lblDataEntry);
 		
 		JLabel lblOutput = new JLabel("Output");
-		lblOutput.setBounds(246, 11, 46, 14);
+		lblOutput.setBounds(239, 11, 46, 14);
 		contentPane.add(lblOutput);
 		
 		textFieldOutput = new JTextField();
 		textFieldOutput.setEditable(false);
-		textFieldOutput.setBounds(285, 8, 112, 20);
+		textFieldOutput.setBounds(278, 8, 112, 20);
 		contentPane.add(textFieldOutput);
 		textFieldOutput.setColumns(10);
 		
+		JComboBox comboBoxAF = new JComboBox();
+		comboBoxAF.setModel(new DefaultComboBoxModel(new String[] {"sigmoid", "step", "tanh", "sigmoid-step"}));
+		comboBoxAF.setBounds(122, 303, 86, 20);
+		contentPane.add(comboBoxAF);
+		
 		JButton btnTrain = new JButton("Train");
+		btnTrain.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//textFieldLayers.setEditable(false);
+				
+				String inputTemp = textFieldLayers.getText();
+				int nInputs = Integer.parseInt(inputTemp);
+				
+				String outputTemp = textFieldLayers.getText();
+				int nOutputs = Integer.parseInt(outputTemp);
+				
+				String layerTemp = textFieldLayers.getText();
+				int nLayers = Integer.parseInt(layerTemp);
+				
+				String nLayerTemp = textFieldNeuronsLayer.getText();
+				int nNeurons = Integer.parseInt(nLayerTemp);
+				
+				String popTemp = textFieldPopSize.getText();
+				int popSize = Integer.parseInt(popTemp);
+				
+				String crossTemp = textFieldPopSize.getText();
+				double crossoverPropability = Double.parseDouble(crossTemp);
+				
+				String mutantTemp = textFieldMutation.getText();
+				double mutationPropability = Double.parseDouble(mutantTemp);
+				
+				String tournamentTemp = textFieldTournamentSize.getText();
+				int tournSize = Integer.parseInt(tournamentTemp);
+				
+				String afTemp = (String) comboBoxAF.getSelectedItem();
+				ActivationFunction af;
+				if (afTemp == "sigmoid"){
+					af = ActivationFunction.SIGMOID;
+				} else if (afTemp == "step") {
+					af = ActivationFunction.STEP;
+				} else if (afTemp == "tanh") {
+					af = ActivationFunction.TANH;
+				} else {
+					af = ActivationFunction.SIGMOID_STEP;
+				}
+				
+				DataSet learningData = new DataSet(nInputs, nOutputs);
+				
+				GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
+						popSize, crossoverPropability, mutationPropability, 
+						tournSize, learningData, af);
+				
+				NeuralNetwork result = moon.optimize(100);
+				
+				//System.out.println(result);
+			}
+		});
 		btnTrain.setBounds(265, 302, 89, 23);
 		contentPane.add(btnTrain);
 		
@@ -126,6 +184,7 @@ public class DriverUI extends JFrame {
 		textFieldNeuronsLayer.setColumns(10);
 		
 		textFieldPopSize = new JTextField();
+		textFieldPopSize.setText("100");
 		textFieldPopSize.setBounds(122, 203, 86, 20);
 		contentPane.add(textFieldPopSize);
 		textFieldPopSize.setColumns(10);
@@ -156,9 +215,22 @@ public class DriverUI extends JFrame {
 		contentPane.add(textFieldTournamentSize);
 		textFieldTournamentSize.setColumns(10);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"sigmoid", "step", "tanh", "sigmoid-step"}));
-		comboBox.setBounds(122, 303, 86, 20);
-		contentPane.add(comboBox);
+		JLabel lblInput = new JLabel("Input");
+		lblInput.setBounds(10, 11, 46, 14);
+		contentPane.add(lblInput);
+		
+		textFieldInput = new JTextField();
+		textFieldInput.setBounds(45, 8, 102, 20);
+		contentPane.add(textFieldInput);
+		textFieldInput.setColumns(10);
+		
+		JButton btnQuery = new JButton("Query");
+		btnQuery.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		btnQuery.setBounds(10, 36, 89, 23);
+		contentPane.add(btnQuery);
 	}
 }
