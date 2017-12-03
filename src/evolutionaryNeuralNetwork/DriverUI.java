@@ -83,10 +83,10 @@ public class DriverUI extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				//textFieldLayers.setEditable(false);
 				
-				String inputTemp = textFieldLayers.getText();
+				String inputTemp = textFieldNInputs.getText();
 				int nInputs = Integer.parseInt(inputTemp);
 				
-				String outputTemp = textFieldLayers.getText();
+				String outputTemp = textFieldNOutput.getText();
 				int nOutputs = Integer.parseInt(outputTemp);
 				
 				String layerTemp = textFieldLayers.getText();
@@ -98,7 +98,7 @@ public class DriverUI extends JFrame {
 				String popTemp = textFieldPopSize.getText();
 				int popSize = Integer.parseInt(popTemp);
 				
-				String crossTemp = textFieldPopSize.getText();
+				String crossTemp = textFieldCossover.getText();
 				double crossoverPropability = Double.parseDouble(crossTemp);
 				
 				String mutantTemp = textFieldMutation.getText();
@@ -120,12 +120,14 @@ public class DriverUI extends JFrame {
 				}
 				
 				DataSet learningData = new DataSet(nInputs, nOutputs);
+				addData(learningData);
+				learningData.normalize();
 				
 				GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
 						popSize, crossoverPropability, mutationPropability, 
 						tournSize, learningData, af);
 				
-				NeuralNetwork result = moon.optimize(100);
+				NeuralNetwork result = moon.optimize(30);
 				
 			}
 		});
@@ -226,10 +228,18 @@ public class DriverUI extends JFrame {
 		JButton btnQuery = new JButton("Query");
 		btnQuery.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				System.out.println(result);
 			}
 		});
 		btnQuery.setBounds(10, 36, 89, 23);
 		contentPane.add(btnQuery);
+	}
+	private static void addData(DataSet learningData) {
+		learningData.addData(new double[] {0.1}, new double[] {0});
+		learningData.addData(new double[] {0.3}, new double[] {0});
+		learningData.addData(new double[] {0.5}, new double[] {0});
+		learningData.addData(new double[] {0.7}, new double[] {1});
+		learningData.addData(new double[] {0.9}, new double[] {1});
+		learningData.addData(new double[] {1}, new double[] {1});
 	}
 }

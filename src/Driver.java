@@ -2,12 +2,13 @@ import java.io.IOException;
 
 import evolutionaryNeuralNetwork.ActivationFunction;
 import evolutionaryNeuralNetwork.DataSet;
+import evolutionaryNeuralNetwork.DriverUI;
 import evolutionaryNeuralNetwork.GeneticAlgorithm;
 import evolutionaryNeuralNetwork.NeuralNetwork;
 import evolutionaryNeuralNetwork.VectorOperations;
 
 public class Driver {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 
 		//NeuralNetwork result = new NeuralNetwork("testfile");
 	

@@ -9,7 +9,7 @@ import java.io.IOException;
 import evolutionaryNeuralNetworkInterfaces.NeuralNetworkInterface;
 
 
-public class NeuralNetwork extends DriverUI implements NeuralNetworkInterface{
+public class NeuralNetwork implements NeuralNetworkInterface{
 
 
 
