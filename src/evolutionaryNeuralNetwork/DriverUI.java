@@ -28,8 +28,7 @@ public class DriverUI extends JFrame {
 	private JTextField textFieldTournamentSize;
 	private JTextField textFieldInput;
 	
-	public NeuralNetwork result;
-	public GeneticAlgorithm moon;
+	
 
 	/**
 	 * Launch the application.
@@ -51,16 +50,21 @@ public class DriverUI extends JFrame {
 	 * Create the frame.
 	 */
 	public DriverUI() {
+		NeuralNetwork result;
+		GeneticAlgorithm moon;
+		int nInputs=0;
+		int nOutputs;
+		
 		setTitle("Evolutionary Neural Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 490, 387);
+		setBounds(100, 100, 614, 389);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JLabel lblDataEntry = new JLabel("Data Entry");
-		lblDataEntry.setBounds(221, 84, 52, 14);
+		lblDataEntry.setBounds(239, 84, 72, 14);
 		contentPane.add(lblDataEntry);
 		
 		JLabel lblOutput = new JLabel("Output");
@@ -69,13 +73,13 @@ public class DriverUI extends JFrame {
 		
 		textFieldOutput = new JTextField();
 		textFieldOutput.setEditable(false);
-		textFieldOutput.setBounds(278, 8, 112, 20);
+		textFieldOutput.setBounds(278, 8, 140, 20);
 		contentPane.add(textFieldOutput);
 		textFieldOutput.setColumns(10);
 		
 		JComboBox comboBoxAF = new JComboBox();
 		comboBoxAF.setModel(new DefaultComboBoxModel(new String[] {"sigmoid", "step", "tanh", "sigmoid-step"}));
-		comboBoxAF.setBounds(122, 303, 86, 20);
+		comboBoxAF.setBounds(160, 303, 86, 20);
 		contentPane.add(comboBoxAF);
 		
 		JButton btnTrain = new JButton("Train");
@@ -121,7 +125,6 @@ public class DriverUI extends JFrame {
 				
 				DataSet learningData = new DataSet(nInputs, nOutputs);
 				addData(learningData);
-				learningData.normalize();
 				
 				GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
 						popSize, crossoverPropability, mutationPropability, 
@@ -131,7 +134,7 @@ public class DriverUI extends JFrame {
 				
 			}
 		});
-		btnTrain.setBounds(265, 302, 89, 23);
+		btnTrain.setBounds(301, 302, 89, 23);
 		contentPane.add(btnTrain);
 		
 		JLabel lblNewLabel = new JLabel("Layers");
@@ -139,80 +142,80 @@ public class DriverUI extends JFrame {
 		contentPane.add(lblNewLabel);
 		
 		JLabel lblNeuronsPerLayer = new JLabel("Neurons per Layer");
-		lblNeuronsPerLayer.setBounds(10, 181, 89, 14);
+		lblNeuronsPerLayer.setBounds(10, 181, 140, 14);
 		contentPane.add(lblNeuronsPerLayer);
 		
 		JLabel lblPopulationSize = new JLabel("Population Size");
-		lblPopulationSize.setBounds(10, 206, 72, 14);
+		lblPopulationSize.setBounds(10, 206, 140, 14);
 		contentPane.add(lblPopulationSize);
 		
 		JLabel lblCrossoverPropability = new JLabel("Crossover Propability");
-		lblCrossoverPropability.setBounds(10, 231, 102, 14);
+		lblCrossoverPropability.setBounds(10, 231, 140, 14);
 		contentPane.add(lblCrossoverPropability);
 		
 		JLabel lblMutationPropability = new JLabel("Mutation Propability");
-		lblMutationPropability.setBounds(10, 256, 95, 14);
+		lblMutationPropability.setBounds(10, 256, 140, 14);
 		contentPane.add(lblMutationPropability);
 		
 		JLabel lblNumberOfInputs = new JLabel("Number of Inputs");
-		lblNumberOfInputs.setBounds(10, 84, 84, 14);
+		lblNumberOfInputs.setBounds(10, 84, 112, 14);
 		contentPane.add(lblNumberOfInputs);
 		
 		JLabel lblNumberOfOutputs = new JLabel("Number of Outputs");
-		lblNumberOfOutputs.setBounds(10, 109, 95, 14);
+		lblNumberOfOutputs.setBounds(10, 109, 112, 14);
 		contentPane.add(lblNumberOfOutputs);
 		
 		textFieldNInputs = new JTextField();
-		textFieldNInputs.setBounds(107, 81, 86, 20);
+		textFieldNInputs.setBounds(122, 81, 86, 20);
 		contentPane.add(textFieldNInputs);
 		textFieldNInputs.setColumns(10);
 		
 		textFieldNOutput = new JTextField();
-		textFieldNOutput.setBounds(107, 106, 86, 20);
+		textFieldNOutput.setBounds(122, 106, 86, 20);
 		contentPane.add(textFieldNOutput);
 		textFieldNOutput.setColumns(10);
 		
 		textFieldLayers = new JTextField();
 		textFieldLayers.setText("1");
-		textFieldLayers.setBounds(122, 153, 86, 20);
+		textFieldLayers.setBounds(160, 153, 86, 20);
 		contentPane.add(textFieldLayers);
 		textFieldLayers.setColumns(10);
 		
 		textFieldNeuronsLayer = new JTextField();
 		textFieldNeuronsLayer.setText("1");
-		textFieldNeuronsLayer.setBounds(122, 178, 86, 20);
+		textFieldNeuronsLayer.setBounds(160, 178, 86, 20);
 		contentPane.add(textFieldNeuronsLayer);
 		textFieldNeuronsLayer.setColumns(10);
 		
 		textFieldPopSize = new JTextField();
 		textFieldPopSize.setText("100");
-		textFieldPopSize.setBounds(122, 203, 86, 20);
+		textFieldPopSize.setBounds(160, 203, 86, 20);
 		contentPane.add(textFieldPopSize);
 		textFieldPopSize.setColumns(10);
 		
 		textFieldCossover = new JTextField();
 		textFieldCossover.setText(".75");
-		textFieldCossover.setBounds(122, 228, 86, 20);
+		textFieldCossover.setBounds(160, 228, 86, 20);
 		contentPane.add(textFieldCossover);
 		textFieldCossover.setColumns(10);
 		
 		textFieldMutation = new JTextField();
 		textFieldMutation.setText(".2");
-		textFieldMutation.setBounds(122, 253, 86, 20);
+		textFieldMutation.setBounds(160, 253, 86, 20);
 		contentPane.add(textFieldMutation);
 		textFieldMutation.setColumns(10);
 		
 		JLabel lblTournamentSize = new JLabel("Tournament Size");
-		lblTournamentSize.setBounds(10, 281, 84, 14);
+		lblTournamentSize.setBounds(10, 281, 112, 14);
 		contentPane.add(lblTournamentSize);
 		
 		JLabel lblActivation = new JLabel("Activation Function");
-		lblActivation.setBounds(10, 306, 95, 14);
+		lblActivation.setBounds(10, 306, 112, 14);
 		contentPane.add(lblActivation);
 		
 		textFieldTournamentSize = new JTextField();
 		textFieldTournamentSize.setText("2");
-		textFieldTournamentSize.setBounds(122, 278, 86, 20);
+		textFieldTournamentSize.setBounds(160, 278, 86, 20);
 		contentPane.add(textFieldTournamentSize);
 		textFieldTournamentSize.setColumns(10);
 		
@@ -221,14 +224,27 @@ public class DriverUI extends JFrame {
 		contentPane.add(lblInput);
 		
 		textFieldInput = new JTextField();
-		textFieldInput.setBounds(45, 8, 102, 20);
+		textFieldInput.setBounds(45, 8, 140, 20);
 		contentPane.add(textFieldInput);
 		textFieldInput.setColumns(10);
 		
 		JButton btnQuery = new JButton("Query");
 		btnQuery.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(result);
+//				DataSet learningData = new DataSet(nInputs, nOutputs);
+//				addData(learningData);
+//				
+//				String nnInputTemp = textFieldInput.getText();
+//				nnInputTemp.split(" ");
+//				double[] input;
+//				for(int i = 0; i < nnInputTemp.length(); i++)
+//				{
+//				    input[i] = Double.parseDouble(nnInputTemp[i]);
+//				}
+//			
+//				result.feedForward(input, learningData);
+				System.out.println(nInputs);
+
 			}
 		});
 		btnQuery.setBounds(10, 36, 89, 23);
