@@ -89,7 +89,7 @@ public class DriverUI extends JFrame {
 				new TrainWorker().execute();
 			}
 		});
-		btnTrain.setBounds(265, 302, 89, 23);
+		btnTrain.setBounds(265, 277, 89, 23);
 		contentPane.add(btnTrain);
 		
 		btnStop = new JButton("Stop");
@@ -247,15 +247,6 @@ public class DriverUI extends JFrame {
 			return false;
 		}
 		return true;	
-	}
-	
-	private static void addData(DataSet learningData) {
-		learningData.addData(new double[] {0.1}, new double[] {0});
-		learningData.addData(new double[] {0.3}, new double[] {0});
-		learningData.addData(new double[] {0.5}, new double[] {0});
-		learningData.addData(new double[] {0.7}, new double[] {1});
-		learningData.addData(new double[] {0.9}, new double[] {1});
-		learningData.addData(new double[] {1}, new double[] {1});
 	}
 	
 	class TrainWorker extends SwingWorker<Void, Void> {
