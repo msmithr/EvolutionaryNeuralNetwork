@@ -22,7 +22,8 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	private ExecutorService executor;
 	private ArrayList<WorkerTask> tasks;
 	private ActivationFunction af;
-	public int iterationNumber = 1;
+	private int iterationNumber = 1;
+	private static boolean stop;
 	
 	/**
 	 * Genetic algorithm for neural network optimization
@@ -50,6 +51,7 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 		this.nNeurons = nNeurons;
 		this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		this.af = af;
+		this.stop = false;
 		
 		// initialize the tasks
 		this.tasks = new ArrayList<WorkerTask>();
@@ -69,6 +71,10 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	
 	public NeuralNetwork optimize(int iterations) {
 		for (int i = 0; i < iterations; i++) {
+			if (this.stop) {
+				this.stop = true;
+				break;
+			}
 			iterate();
 		}
 		executor.shutdown();
@@ -84,14 +90,18 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 	 * @return The best neural network at stop time
 	 */
 	public NeuralNetwork optimizeUntil(double error) {
-		while (iterate() > error) ;
+		while (iterate() > error && !this.stop) ;
 		executor.shutdown();
-		
+		this.stop = false;
 		
 		// find the best network
 		NeuralNetwork[] results = generateNetworks(population);
 		System.out.printf("\nCompleted in %d iterations\n\n", iterationNumber);
 		return bestNN(results, learningData);
+	}
+	
+	public static void stop() {
+		stop = true;
 	}
 
 	/**
