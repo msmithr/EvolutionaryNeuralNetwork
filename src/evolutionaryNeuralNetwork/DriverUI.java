@@ -11,8 +11,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 
@@ -32,8 +34,13 @@ public class DriverUI extends JFrame {
 	private JButton btnStop;
 	private JComboBox<String> comboBoxAF;
 	private JButton btnTrain;
-	
-	
+	private JTextField textFieldFileName;
+	private JButton btnFind;
+	private JButton btnLoad;
+
+	private DataSet learningData;
+	public NeuralNetwork result;
+	public GeneticAlgorithm moon;
 
 	/**
 	 * Launch the application.
@@ -82,77 +89,19 @@ public class DriverUI extends JFrame {
 		contentPane.add(textFieldOutput);
 		textFieldOutput.setColumns(10);
 		
-<<<<<<< HEAD
-		JComboBox comboBoxAF = new JComboBox();
-		comboBoxAF.setModel(new DefaultComboBoxModel(new String[] {"sigmoid", "step", "tanh", "sigmoid-step"}));
-		comboBoxAF.setBounds(160, 303, 86, 20);
-=======
 		comboBoxAF = new JComboBox<String>();
 		comboBoxAF.setModel(new DefaultComboBoxModel<String>(new String[] {"sigmoid", "step", "tanh", "sigmoid-step"}));
 		comboBoxAF.setBounds(122, 303, 86, 20);
->>>>>>> af71df8aaa120131e7ab50e19c5078da900d72e4
 		contentPane.add(comboBoxAF);
 		
 		btnTrain = new JButton("Train");
 		btnTrain.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-<<<<<<< HEAD
-				//textFieldLayers.setEditable(false);
-				
-				String inputTemp = textFieldNInputs.getText();
-				int nInputs = Integer.parseInt(inputTemp);
-				
-				String outputTemp = textFieldNOutput.getText();
-				int nOutputs = Integer.parseInt(outputTemp);
-				
-				String layerTemp = textFieldLayers.getText();
-				int nLayers = Integer.parseInt(layerTemp);
-				
-				String nLayerTemp = textFieldNeuronsLayer.getText();
-				int nNeurons = Integer.parseInt(nLayerTemp);
-				
-				String popTemp = textFieldPopSize.getText();
-				int popSize = Integer.parseInt(popTemp);
-				
-				String crossTemp = textFieldCossover.getText();
-				double crossoverPropability = Double.parseDouble(crossTemp);
-				
-				String mutantTemp = textFieldMutation.getText();
-				double mutationPropability = Double.parseDouble(mutantTemp);
-				
-				String tournamentTemp = textFieldTournamentSize.getText();
-				int tournSize = Integer.parseInt(tournamentTemp);
-				
-				String afTemp = (String) comboBoxAF.getSelectedItem();
-				ActivationFunction af;
-				if (afTemp == "sigmoid"){
-					af = ActivationFunction.SIGMOID;
-				} else if (afTemp == "step") {
-					af = ActivationFunction.STEP;
-				} else if (afTemp == "tanh") {
-					af = ActivationFunction.TANH;
-				} else {
-					af = ActivationFunction.SIGMOID_STEP;
-				}
-				
-				DataSet learningData = new DataSet(nInputs, nOutputs);
-				addData(learningData);
-				
-				GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
-						popSize, crossoverPropability, mutationPropability, 
-						tournSize, learningData, af);
-				
-				NeuralNetwork result = moon.optimize(30);
-				
-			}
-		});
-		btnTrain.setBounds(301, 302, 89, 23);
-=======
 				new TrainWorker().execute();
 			}
 		});
+		btnTrain.setEnabled(false);
 		btnTrain.setBounds(265, 277, 89, 23);
->>>>>>> af71df8aaa120131e7ab50e19c5078da900d72e4
 		contentPane.add(btnTrain);
 		
 		btnStop = new JButton("Stop");
@@ -166,11 +115,68 @@ public class DriverUI extends JFrame {
 		});
 		contentPane.add(btnStop);
 		
+		btnFind = new JButton("Find");
+		btnFind.setBounds(285, 178, 89, 23);
+		btnFind.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fileChooser = new JFileChooser();
+				int action = JFileChooser.ERROR_OPTION;
+				action = fileChooser.showOpenDialog(null);
+				if (action == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					textFieldFileName.setText(selectedFile.getPath());
+				}
+				btnTrain.setEnabled(true);
+			}
+		});
+		contentPane.add(btnFind);
+		
+		btnLoad = new JButton("Load Data");
+		btnLoad.setBounds(285, 203, 89, 23);
+		btnLoad.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (textFieldFileName.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "No file selected");
+					return;
+				}
+			
+				if (textFieldNInputs.getText().isEmpty() || textFieldNOutputs.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Invalid Inputs");
+					return;
+				}
+				
+				int nInputs = Integer.parseInt(textFieldNInputs.getText());
+				int nOutputs = Integer.parseInt(textFieldNOutputs.getText());
+				
+				if (nInputs <= 0 || nOutputs <= 0) {
+					JOptionPane.showMessageDialog(null, "Invalid Inputs");
+					return;
+				}
+				
+				DataSet dataset = null;
+				try {
+					dataset = new DataSet(textFieldFileName.getText(), nInputs, nOutputs);
+				} catch (IOException e) {
+					return;
+				}
+				
+				learningData = dataset;
+				btnTrain.setEnabled(true);
+			}
+		});
+		contentPane.add(btnLoad);
+		
 
 		
 		JLabel lblNewLabel = new JLabel("Layers");
 		lblNewLabel.setBounds(10, 156, 46, 14);
 		contentPane.add(lblNewLabel);
+		
+		JLabel lblFileName = new JLabel("Data File");
+		lblFileName.setBounds(215, 155, 89, 14);
+		contentPane.add(lblFileName);
 		
 		JLabel lblNeuronsPerLayer = new JLabel("Neurons per Layer");
 		lblNeuronsPerLayer.setBounds(10, 181, 140, 14);
@@ -201,17 +207,10 @@ public class DriverUI extends JFrame {
 		contentPane.add(textFieldNInputs);
 		textFieldNInputs.setColumns(10);
 		
-<<<<<<< HEAD
 		textFieldNOutput = new JTextField();
 		textFieldNOutput.setBounds(122, 106, 86, 20);
 		contentPane.add(textFieldNOutput);
 		textFieldNOutput.setColumns(10);
-=======
-		textFieldNOutputs = new JTextField();
-		textFieldNOutputs.setBounds(107, 106, 86, 20);
-		contentPane.add(textFieldNOutputs);
-		textFieldNOutputs.setColumns(10);
->>>>>>> af71df8aaa120131e7ab50e19c5078da900d72e4
 		
 		textFieldLayers = new JTextField();
 		textFieldLayers.setText("1");
@@ -231,25 +230,23 @@ public class DriverUI extends JFrame {
 		contentPane.add(textFieldPopSize);
 		textFieldPopSize.setColumns(10);
 		
-<<<<<<< HEAD
-		textFieldCossover = new JTextField();
-		textFieldCossover.setText(".75");
-		textFieldCossover.setBounds(160, 228, 86, 20);
-		contentPane.add(textFieldCossover);
-		textFieldCossover.setColumns(10);
-=======
 		textFieldCrossover = new JTextField();
 		textFieldCrossover.setText(".75");
 		textFieldCrossover.setBounds(122, 228, 86, 20);
 		contentPane.add(textFieldCrossover);
 		textFieldCrossover.setColumns(10);
->>>>>>> af71df8aaa120131e7ab50e19c5078da900d72e4
 		
 		textFieldMutation = new JTextField();
 		textFieldMutation.setText(".2");
 		textFieldMutation.setBounds(160, 253, 86, 20);
 		contentPane.add(textFieldMutation);
 		textFieldMutation.setColumns(10);
+		
+		textFieldFileName = new JTextField();
+		textFieldFileName.setBounds(285, 153, 86, 20);
+		contentPane.add(textFieldFileName);
+		textFieldFileName.setEditable(false);
+		textFieldFileName.setColumns(10);
 		
 		JLabel lblTournamentSize = new JLabel("Tournament Size");
 		lblTournamentSize.setBounds(10, 281, 112, 14);
@@ -403,14 +400,6 @@ public class DriverUI extends JFrame {
 				af = ActivationFunction.TANH;
 			} else {
 				af = ActivationFunction.SIGMOID_STEP;
-			}
-			
-			DataSet learningData;
-			try {
-				learningData = new DataSet("wineData", nInputs, nOutputs);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
 			}
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
