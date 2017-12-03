@@ -86,7 +86,9 @@ public class DriverUI extends JFrame {
 		btnTrain = new JButton("Train");
 		btnTrain.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("running");
 				new TrainWorker().execute();
+				System.out.println("ran");
 			}
 		});
 		btnTrain.setBounds(339, 277, 89, 23);
@@ -199,7 +201,7 @@ public class DriverUI extends JFrame {
 		JButton btnQuery = new JButton("Query");
 		btnQuery.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(result);
+				
 			}
 		});
 		btnQuery.setBounds(10, 36, 89, 23);
