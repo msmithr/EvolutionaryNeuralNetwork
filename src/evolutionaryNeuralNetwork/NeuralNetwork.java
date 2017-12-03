@@ -129,17 +129,6 @@ public class NeuralNetwork implements NeuralNetworkInterface{
 		return state;
 	} // end feedForward()
 	
-	public double[] feedForward(double[] inputs, DataSet learningData) {
-		double[] max = learningData.getMaximums();
-		double[] min = learningData.getMinimums();
-		
-		for (int i = 0; i < inputs.length; i++) {
-			inputs[i] = (inputs[i] - min[i]) / (max[i] - min[i]);
-		}
-		
-		return feedForward(inputs);
-	} // end feedForward()
-	
 	public void save(String filename) throws IOException {
 		FileWriter filewriter = new FileWriter(filename);
 		BufferedWriter bufferedWriter = new BufferedWriter(filewriter);

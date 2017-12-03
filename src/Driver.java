@@ -8,17 +8,18 @@ import evolutionaryNeuralNetwork.NeuralNetwork;
 import evolutionaryNeuralNetwork.VectorOperations;
 
 public class Driver {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
+		
+		DataSet learningData = new DataSet("wineData",13 ,3);
 		//NeuralNetwork result = new NeuralNetwork("testfile");
-	
-		DataSet learningData = new DataSet(13, 3);
-		addWineData(learningData);
-		learningData.normalize();
+		
+		//learningData.normalize();
+
 		
                 
         GeneticAlgorithm GA = new GeneticAlgorithm(13, 3, 3, 20, 100, 0.7, 0.3, 4, learningData, ActivationFunction.STEP);
-        NeuralNetwork result = GA.optimizeUntil(30);
+        NeuralNetwork result = GA.optimizeUntil(2);
         
         try {
 			result.save("testfile");
@@ -26,23 +27,17 @@ public class Driver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-        
-        /*
-        System.out.println(VectorOperations.toStrigfg(result.feedForward(new double[] {0.3})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.5})));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.7})));
-        */
-        
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.83,1.57,2.62,20,115,2.95,3.4,.4,1.72,6.6,1.13,2.57,1130}, learningData)));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {14.19,1.59,2.48,16.5,108,3.3,3.93,.32,1.86,8.7,1.23,2.82,1680}, learningData)));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {11.64,2.06,2.46,21.6,84,1.95,1.69,.48,1.35,2.8,1,2.75,680}, learningData)));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.08,1.33,2.3,23.6,70,2.2,1.59,.42,1.38,1.74,1.07,3.21,625}, learningData)));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.08,1.83,2.32,18.5,81,1.6,1.5,.52,1.64,2.4,1.08,2.27,480}, learningData)));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.69,3.26,2.54,20,107,1.83,.56,.5,.8,5.88,.96,1.82,680}, learningData)));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.85,3.27,2.58,22,106,1.65,.6,.6,.96,5.58,.87,2.11,570}, learningData)));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.96,3.45,2.35,18.5,106,1.39,.7,.4,.94,5.28,.68,1.75,675}, learningData)));
-        System.out.println(VectorOperations.toString(result.feedForward(new double[] {11.81,2.12,2.74,21.5,134,1.6,.99,.14,1.56,2.5,.95,2.26,625}, learningData)));
+ 
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {0.8421052631578949, 0.191699604743083, 0.572192513368984, 0.2577319587628866, 0.5833333333333334, 0.6275862068965516, 0.5738396624472574, 0.28301886792452835, 0.5930599369085174, 0.37201365187713303, 0.4552845528455285, 0.9706959706959707, 0.6201733648542159 })));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {14.19,1.59,2.48,16.5,108,3.3,3.93,.32,1.86,8.7,1.23,2.82,1680})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {11.64,2.06,2.46,21.6,84,1.95,1.69,.48,1.35,2.8,1,2.75,680})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.08,1.33,2.3,23.6,70,2.2,1.59,.42,1.38,1.74,1.07,3.21,625})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.08,1.83,2.32,18.5,81,1.6,1.5,.52,1.64,2.4,1.08,2.27,480})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {13.69,3.26,2.54,20,107,1.83,.56,.5,.8,5.88,.96,1.82,680})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.85,3.27,2.58,22,106,1.65,.6,.6,.96,5.58,.87,2.11,570})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {12.96,3.45,2.35,18.5,106,1.39,.7,.4,.94,5.28,.68,1.75,675})));
+        System.out.println(VectorOperations.toString(result.feedForward(new double[] {11.81,2.12,2.74,21.5,134,1.6,.99,.14,1.56,2.5,.95,2.26,625})));
+  
 	}
 	
 	private static void addData(DataSet learningData) {

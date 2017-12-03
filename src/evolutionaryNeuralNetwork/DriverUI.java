@@ -121,7 +121,6 @@ public class DriverUI extends JFrame {
 				
 				DataSet learningData = new DataSet(nInputs, nOutputs);
 				addData(learningData);
-				learningData.normalize();
 				
 				GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
 						popSize, crossoverPropability, mutationPropability, 
