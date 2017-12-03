@@ -11,8 +11,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 
@@ -32,7 +34,11 @@ public class DriverUI extends JFrame {
 	private JButton btnStop;
 	private JComboBox<String> comboBoxAF;
 	private JButton btnTrain;
-	
+	private JTextField textFieldFileName;
+	private JButton btnFind;
+	private JButton btnLoad;
+
+	private DataSet learningData;
 	public NeuralNetwork result;
 	public GeneticAlgorithm moon;
 
@@ -64,10 +70,6 @@ public class DriverUI extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblDataEntry = new JLabel("Data Entry");
-		lblDataEntry.setBounds(221, 84, 52, 14);
-		contentPane.add(lblDataEntry);
-		
 		JLabel lblOutput = new JLabel("Output");
 		lblOutput.setBounds(239, 11, 46, 14);
 		contentPane.add(lblOutput);
@@ -89,6 +91,7 @@ public class DriverUI extends JFrame {
 				new TrainWorker().execute();
 			}
 		});
+		btnTrain.setEnabled(false);
 		btnTrain.setBounds(265, 277, 89, 23);
 		contentPane.add(btnTrain);
 		
@@ -103,11 +106,68 @@ public class DriverUI extends JFrame {
 		});
 		contentPane.add(btnStop);
 		
+		btnFind = new JButton("Find");
+		btnFind.setBounds(285, 178, 89, 23);
+		btnFind.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fileChooser = new JFileChooser();
+				int action = JFileChooser.ERROR_OPTION;
+				action = fileChooser.showOpenDialog(null);
+				if (action == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					textFieldFileName.setText(selectedFile.getPath());
+				}
+				btnTrain.setEnabled(true);
+			}
+		});
+		contentPane.add(btnFind);
+		
+		btnLoad = new JButton("Load Data");
+		btnLoad.setBounds(285, 203, 89, 23);
+		btnLoad.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (textFieldFileName.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "No file selected");
+					return;
+				}
+			
+				if (textFieldNInputs.getText().isEmpty() || textFieldNOutputs.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Invalid Inputs");
+					return;
+				}
+				
+				int nInputs = Integer.parseInt(textFieldNInputs.getText());
+				int nOutputs = Integer.parseInt(textFieldNOutputs.getText());
+				
+				if (nInputs <= 0 || nOutputs <= 0) {
+					JOptionPane.showMessageDialog(null, "Invalid Inputs");
+					return;
+				}
+				
+				DataSet dataset = null;
+				try {
+					dataset = new DataSet(textFieldFileName.getText(), nInputs, nOutputs);
+				} catch (IOException e) {
+					return;
+				}
+				
+				learningData = dataset;
+				btnTrain.setEnabled(true);
+			}
+		});
+		contentPane.add(btnLoad);
+		
 
 		
 		JLabel lblNewLabel = new JLabel("Layers");
 		lblNewLabel.setBounds(10, 156, 46, 14);
 		contentPane.add(lblNewLabel);
+		
+		JLabel lblFileName = new JLabel("Data File");
+		lblFileName.setBounds(215, 155, 89, 14);
+		contentPane.add(lblFileName);
 		
 		JLabel lblNeuronsPerLayer = new JLabel("Neurons per Layer");
 		lblNeuronsPerLayer.setBounds(10, 181, 89, 14);
@@ -172,6 +232,12 @@ public class DriverUI extends JFrame {
 		textFieldMutation.setBounds(122, 253, 86, 20);
 		contentPane.add(textFieldMutation);
 		textFieldMutation.setColumns(10);
+		
+		textFieldFileName = new JTextField();
+		textFieldFileName.setBounds(285, 153, 86, 20);
+		contentPane.add(textFieldFileName);
+		textFieldFileName.setEditable(false);
+		textFieldFileName.setColumns(10);
 		
 		JLabel lblTournamentSize = new JLabel("Tournament Size");
 		lblTournamentSize.setBounds(10, 281, 84, 14);
@@ -312,14 +378,6 @@ public class DriverUI extends JFrame {
 				af = ActivationFunction.TANH;
 			} else {
 				af = ActivationFunction.SIGMOID_STEP;
-			}
-			
-			DataSet learningData;
-			try {
-				learningData = new DataSet("wineData", nInputs, nOutputs);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
 			}
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
