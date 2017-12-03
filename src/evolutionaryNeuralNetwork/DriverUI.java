@@ -127,7 +127,6 @@ public class DriverUI extends JFrame {
 				
 				NeuralNetwork result = moon.optimize(100);
 				
-				//System.out.println(result);
 			}
 		});
 		btnTrain.setBounds(265, 302, 89, 23);

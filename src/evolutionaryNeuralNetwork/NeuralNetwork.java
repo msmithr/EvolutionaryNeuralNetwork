@@ -8,11 +8,11 @@ import java.io.IOException;
 
 import evolutionaryNeuralNetworkInterfaces.NeuralNetworkInterface;
 
-<<<<<<< HEAD
+
 public class NeuralNetwork extends DriverUI implements NeuralNetworkInterface{
-=======
-public class NeuralNetwork implements NeuralNetworkInterface {
->>>>>>> fe160fb419552890c5f852c5e45927c6616973cf
+
+
+
 	private double[][][] weightMatrices;
 	private double[][] thresholdVectors;
 	private double[] chromosome;
@@ -163,4 +163,5 @@ public class NeuralNetwork implements NeuralNetworkInterface {
 		bufferedWriter.close();
 	}
 	
-} // end class
+
+}// end class
