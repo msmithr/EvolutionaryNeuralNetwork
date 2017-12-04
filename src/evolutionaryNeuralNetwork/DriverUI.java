@@ -124,7 +124,6 @@ public class DriverUI extends JFrame {
 					File selectedFile = fileChooser.getSelectedFile();
 					textFieldFileName.setText(selectedFile.getPath());
 				}
-				btnTrain.setEnabled(true);
 			}
 		});
 		contentPane.add(btnFind);
@@ -402,6 +401,8 @@ public class DriverUI extends JFrame {
 			} else {
 				af = ActivationFunction.SIGMOID_STEP;
 			}
+			
+			System.out.println(learningData);
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
 					popSize, crossoverPropability, mutationPropability, 
