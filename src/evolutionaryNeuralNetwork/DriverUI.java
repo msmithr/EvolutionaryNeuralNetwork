@@ -3,8 +3,9 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-
+import javax.swing.text.DefaultCaret;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -16,8 +17,12 @@ import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextPane;
+import javax.swing.JTextArea;
+import java.awt.ScrollPane;
 
 public class DriverUI extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -71,7 +76,7 @@ public class DriverUI extends JFrame {
 		
 		setTitle("Evolutionary Neural Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 713, 497);
+		setBounds(100, 100, 764, 497);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -83,7 +88,7 @@ public class DriverUI extends JFrame {
 		
 		textFieldOutput = new JTextField();
 		textFieldOutput.setEditable(false);
-		textFieldOutput.setBounds(278, 8, 408, 20);
+		textFieldOutput.setBounds(278, 8, 460, 20);
 		contentPane.add(textFieldOutput);
 		textFieldOutput.setColumns(10);
 		
@@ -113,7 +118,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(btnTrainUntilError);
 		
 		btnStop = new JButton("Stop");
-		btnStop.setBounds(283, 300, 153, 23);
+		btnStop.setBounds(283, 378, 153, 23);
 		btnStop.setEnabled(false);
 		btnStop.addActionListener(new ActionListener() {
 			@Override
@@ -124,7 +129,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(btnStop);
 		
 		btnFind = new JButton("Find");
-		btnFind.setBounds(323, 109, 113, 23);
+		btnFind.setBounds(283, 109, 113, 23);
 		btnFind.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -140,7 +145,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(btnFind);
 		
 		btnLoad = new JButton("Load Data");
-		btnLoad.setBounds(323, 143, 113, 23);
+		btnLoad.setBounds(283, 143, 113, 23);
 		btnLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -251,7 +256,7 @@ public class DriverUI extends JFrame {
 		textFieldMutation.setColumns(10);
 		
 		textFieldFileName = new JTextField();
-		textFieldFileName.setBounds(323, 81, 363, 20);
+		textFieldFileName.setBounds(323, 81, 415, 20);
 		contentPane.add(textFieldFileName);
 		textFieldFileName.setEditable(false);
 		textFieldFileName.setColumns(10);
@@ -314,13 +319,8 @@ public class DriverUI extends JFrame {
 		contentPane.add(btnLoadNn);
 		
 		JLabel lblError = new JLabel("Error");
-		lblError.setBounds(446, 113, 46, 14);
+		lblError.setBounds(406, 113, 46, 14);
 		contentPane.add(lblError);
-		
-		JTextPane textPaneError = new JTextPane();
-		textPaneError.setEditable(false);
-		textPaneError.setBounds(487, 109, 199, 286);
-		contentPane.add(textPaneError);
 		
 		JLabel lblNumberOfIterations = new JLabel("Number of Iterations");
 		lblNumberOfIterations.setBounds(10, 331, 127, 14);
@@ -341,6 +341,23 @@ public class DriverUI extends JFrame {
 		textFieldErrorUntil.setBounds(187, 353, 86, 20);
 		contentPane.add(textFieldErrorUntil);
 		textFieldErrorUntil.setColumns(10);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(446, 112, 292, 336);
+		contentPane.add(scrollPane);
+		
+		JTextArea textAreaError = new JTextArea();
+		scrollPane.setViewportView(textAreaError);
+		//sets the textAreaError to display stdout
+		PrintStream out = new PrintStream(new TextAreaOutputStream(textAreaError));
+		System.setOut(out);
+		
+		//supposedly scrolls to bottom when updated
+		DefaultCaret caret = (DefaultCaret) textAreaError.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		
+		textAreaError.setEditable(false);
+		
 	
 	}
 	
@@ -577,5 +594,33 @@ public class DriverUI extends JFrame {
 			
 		}
 		
+	}
+	
+	public class TextAreaOutputStream extends OutputStream {
+	    private JTextArea textControl;
+
+	    /**
+	     * Creates a new instance of TextAreaOutputStream which writes
+	     * to the specified instance of javax.swing.JTextArea control.
+	     *
+	     * @param control   A reference to the javax.swing.JTextArea
+	     *                  control to which the output must be redirected
+	     *                  to.
+	     */
+	    public TextAreaOutputStream( JTextArea control ) {
+	        textControl = control;
+	    }
+
+	    /**
+	     * Writes the specified byte as a character to the
+	     * javax.swing.JTextArea.
+	     *
+	     * @param   b   The byte to be written as character to the
+	     *              JTextArea.
+	     */
+	    public void write( int b ) throws IOException {
+	        // append the data as characters to the JTextArea control
+	        textControl.append( String.valueOf( ( char )b ) );
+	    }  
 	}
 }
