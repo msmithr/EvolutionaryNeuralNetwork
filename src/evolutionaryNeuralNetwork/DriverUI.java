@@ -402,8 +402,6 @@ public class DriverUI extends JFrame {
 				af = ActivationFunction.SIGMOID_STEP;
 			}
 			
-			System.out.println(learningData);
-			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
 					popSize, crossoverPropability, mutationPropability, 
 					tournSize, learningData, af);
