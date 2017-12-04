@@ -69,14 +69,14 @@ public class DriverUI extends JFrame {
 		
 		setTitle("Evolutionary Neural Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 614, 389);
+		setBounds(100, 100, 583, 392);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JLabel lblDataEntry = new JLabel("Data Entry");
-		lblDataEntry.setBounds(239, 84, 72, 14);
+		lblDataEntry.setBounds(278, 84, 74, 14);
 		contentPane.add(lblDataEntry);
 		
 		JLabel lblOutput = new JLabel("Output");
@@ -85,27 +85,29 @@ public class DriverUI extends JFrame {
 		
 		textFieldOutput = new JTextField();
 		textFieldOutput.setEditable(false);
-		textFieldOutput.setBounds(278, 8, 140, 20);
+		textFieldOutput.setBounds(278, 8, 150, 20);
 		contentPane.add(textFieldOutput);
 		textFieldOutput.setColumns(10);
 		
 		comboBoxAF = new JComboBox<String>();
 		comboBoxAF.setModel(new DefaultComboBoxModel<String>(new String[] {"sigmoid", "step", "tanh", "sigmoid-step"}));
-		comboBoxAF.setBounds(122, 303, 86, 20);
+		comboBoxAF.setBounds(187, 303, 86, 20);
 		contentPane.add(comboBoxAF);
 		
 		btnTrain = new JButton("Train");
 		btnTrain.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("running");
 				new TrainWorker().execute();
+				System.out.println("ran");
 			}
 		});
+		btnTrain.setBounds(339, 277, 89, 23);
 		btnTrain.setEnabled(false);
-		btnTrain.setBounds(265, 277, 89, 23);
 		contentPane.add(btnTrain);
 		
 		btnStop = new JButton("Stop");
-		btnStop.setBounds(265, 252, 89, 23);
+		btnStop.setBounds(339, 252, 89, 23);
 		btnStop.setEnabled(false);
 		btnStop.addActionListener(new ActionListener() {
 			@Override
@@ -179,66 +181,66 @@ public class DriverUI extends JFrame {
 		contentPane.add(lblFileName);
 		
 		JLabel lblNeuronsPerLayer = new JLabel("Neurons per Layer");
-		lblNeuronsPerLayer.setBounds(10, 181, 140, 14);
+		lblNeuronsPerLayer.setBounds(10, 181, 167, 14);
 		contentPane.add(lblNeuronsPerLayer);
 		
 		JLabel lblPopulationSize = new JLabel("Population Size");
-		lblPopulationSize.setBounds(10, 206, 140, 14);
+		lblPopulationSize.setBounds(10, 206, 167, 14);
 		contentPane.add(lblPopulationSize);
 		
 		JLabel lblCrossoverPropability = new JLabel("Crossover Propability");
-		lblCrossoverPropability.setBounds(10, 231, 140, 14);
+		lblCrossoverPropability.setBounds(10, 231, 167, 14);
 		contentPane.add(lblCrossoverPropability);
 		
 		JLabel lblMutationPropability = new JLabel("Mutation Propability");
-		lblMutationPropability.setBounds(10, 256, 140, 14);
+		lblMutationPropability.setBounds(10, 256, 167, 14);
 		contentPane.add(lblMutationPropability);
 		
 		JLabel lblNumberOfInputs = new JLabel("Number of Inputs");
-		lblNumberOfInputs.setBounds(10, 84, 112, 14);
+		lblNumberOfInputs.setBounds(10, 84, 113, 14);
 		contentPane.add(lblNumberOfInputs);
 		
 		JLabel lblNumberOfOutputs = new JLabel("Number of Outputs");
-		lblNumberOfOutputs.setBounds(10, 109, 112, 14);
+		lblNumberOfOutputs.setBounds(10, 109, 113, 14);
 		contentPane.add(lblNumberOfOutputs);
 		
 		textFieldNInputs = new JTextField();
-		textFieldNInputs.setBounds(122, 81, 86, 20);
+		textFieldNInputs.setBounds(133, 81, 86, 20);
 		contentPane.add(textFieldNInputs);
 		textFieldNInputs.setColumns(10);
 		
-		textFieldNOutput = new JTextField();
-		textFieldNOutput.setBounds(122, 106, 86, 20);
-		contentPane.add(textFieldNOutput);
-		textFieldNOutput.setColumns(10);
+		textFieldNOutputs = new JTextField();
+		textFieldNOutputs.setBounds(133, 106, 86, 20);
+		contentPane.add(textFieldNOutputs);
+		textFieldNOutputs.setColumns(10);
 		
 		textFieldLayers = new JTextField();
 		textFieldLayers.setText("1");
-		textFieldLayers.setBounds(160, 153, 86, 20);
+		textFieldLayers.setBounds(187, 153, 86, 20);
 		contentPane.add(textFieldLayers);
 		textFieldLayers.setColumns(10);
 		
 		textFieldNeuronsLayer = new JTextField();
 		textFieldNeuronsLayer.setText("1");
-		textFieldNeuronsLayer.setBounds(160, 178, 86, 20);
+		textFieldNeuronsLayer.setBounds(187, 178, 86, 20);
 		contentPane.add(textFieldNeuronsLayer);
 		textFieldNeuronsLayer.setColumns(10);
 		
 		textFieldPopSize = new JTextField();
 		textFieldPopSize.setText("100");
-		textFieldPopSize.setBounds(160, 203, 86, 20);
+		textFieldPopSize.setBounds(187, 203, 86, 20);
 		contentPane.add(textFieldPopSize);
 		textFieldPopSize.setColumns(10);
 		
 		textFieldCrossover = new JTextField();
 		textFieldCrossover.setText(".75");
-		textFieldCrossover.setBounds(122, 228, 86, 20);
+		textFieldCrossover.setBounds(187, 228, 86, 20);
 		contentPane.add(textFieldCrossover);
 		textFieldCrossover.setColumns(10);
 		
 		textFieldMutation = new JTextField();
 		textFieldMutation.setText(".2");
-		textFieldMutation.setBounds(160, 253, 86, 20);
+		textFieldMutation.setBounds(187, 253, 86, 20);
 		contentPane.add(textFieldMutation);
 		textFieldMutation.setColumns(10);
 		
@@ -249,16 +251,16 @@ public class DriverUI extends JFrame {
 		textFieldFileName.setColumns(10);
 		
 		JLabel lblTournamentSize = new JLabel("Tournament Size");
-		lblTournamentSize.setBounds(10, 281, 112, 14);
+		lblTournamentSize.setBounds(10, 281, 167, 14);
 		contentPane.add(lblTournamentSize);
 		
 		JLabel lblActivation = new JLabel("Activation Function");
-		lblActivation.setBounds(10, 306, 112, 14);
+		lblActivation.setBounds(10, 306, 167, 14);
 		contentPane.add(lblActivation);
 		
 		textFieldTournamentSize = new JTextField();
 		textFieldTournamentSize.setText("2");
-		textFieldTournamentSize.setBounds(160, 278, 86, 20);
+		textFieldTournamentSize.setBounds(187, 278, 86, 20);
 		contentPane.add(textFieldTournamentSize);
 		textFieldTournamentSize.setColumns(10);
 		
@@ -267,7 +269,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(lblInput);
 		
 		textFieldInput = new JTextField();
-		textFieldInput.setBounds(45, 8, 140, 20);
+		textFieldInput.setBounds(45, 8, 148, 20);
 		contentPane.add(textFieldInput);
 		textFieldInput.setColumns(10);
 		
