@@ -102,12 +102,12 @@ public class DriverUI extends JFrame {
 				System.out.println("ran");
 			}
 		});
-		btnTrain.setBounds(339, 277, 89, 23);
+		btnTrain.setBounds(408, 302, 89, 23);
 		btnTrain.setEnabled(false);
 		contentPane.add(btnTrain);
 		
 		btnStop = new JButton("Stop");
-		btnStop.setBounds(339, 252, 89, 23);
+		btnStop.setBounds(408, 268, 89, 23);
 		btnStop.setEnabled(false);
 		btnStop.addActionListener(new ActionListener() {
 			@Override
@@ -118,7 +118,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(btnStop);
 		
 		btnFind = new JButton("Find");
-		btnFind.setBounds(285, 178, 89, 23);
+		btnFind.setBounds(408, 177, 89, 23);
 		btnFind.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -135,7 +135,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(btnFind);
 		
 		btnLoad = new JButton("Load Data");
-		btnLoad.setBounds(285, 203, 89, 23);
+		btnLoad.setBounds(408, 202, 89, 23);
 		btnLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -173,11 +173,11 @@ public class DriverUI extends JFrame {
 
 		
 		JLabel lblNewLabel = new JLabel("Layers");
-		lblNewLabel.setBounds(10, 156, 46, 14);
+		lblNewLabel.setBounds(10, 156, 74, 14);
 		contentPane.add(lblNewLabel);
 		
 		JLabel lblFileName = new JLabel("Data File");
-		lblFileName.setBounds(215, 155, 89, 14);
+		lblFileName.setBounds(339, 156, 89, 14);
 		contentPane.add(lblFileName);
 		
 		JLabel lblNeuronsPerLayer = new JLabel("Neurons per Layer");
@@ -245,7 +245,7 @@ public class DriverUI extends JFrame {
 		textFieldMutation.setColumns(10);
 		
 		textFieldFileName = new JTextField();
-		textFieldFileName.setBounds(285, 153, 86, 20);
+		textFieldFileName.setBounds(411, 153, 86, 20);
 		contentPane.add(textFieldFileName);
 		textFieldFileName.setEditable(false);
 		textFieldFileName.setColumns(10);
