@@ -43,6 +43,9 @@ public class DriverUI extends JFrame {
 	private JTextField textFieldFileName;
 	private JButton btnFind;
 	private JButton btnLoad;
+	private JButton btnQuery;
+	private JButton btnSaveNN;
+	private JButton btnLoadNN;
 
 	private DataSet learningData;
 	public NeuralNetwork result;
@@ -284,7 +287,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(textFieldInput);
 		textFieldInput.setColumns(10);
 		
-		JButton btnQuery = new JButton("Query");
+		btnQuery = new JButton("Query");
 		btnQuery.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -308,15 +311,17 @@ public class DriverUI extends JFrame {
 			}
 		});
 		btnQuery.setBounds(10, 36, 89, 23);
+		btnQuery.setEnabled(false);
 		contentPane.add(btnQuery);
 		
-		JButton btnSaveNN = new JButton("Save NN");
+		btnSaveNN = new JButton("Save NN");
 		btnSaveNN.setBounds(10, 400, 113, 23);
+		btnSaveNN.setEnabled(false);
 		contentPane.add(btnSaveNN);
 		
-		JButton btnLoadNn = new JButton("Load NN");
-		btnLoadNn.setBounds(10, 425, 113, 23);
-		contentPane.add(btnLoadNn);
+		btnLoadNN = new JButton("Load NN");
+		btnLoadNN.setBounds(10, 425, 113, 23);
+		contentPane.add(btnLoadNN);
 		
 		JLabel lblError = new JLabel("Error");
 		lblError.setBounds(406, 113, 46, 14);
@@ -416,9 +421,12 @@ public class DriverUI extends JFrame {
 			textFieldCrossover.setEditable(false);
 			textFieldMutation.setEditable(false);
 			textFieldTournamentSize.setEditable(false);
-			comboBoxAF.setEditable(false);
+			comboBoxAF.setEnabled(false);
 			textFieldNIterations.setEditable(false);
 			textFieldErrorUntil.setEditable(false);
+			btnSaveNN.setEnabled(false);
+			btnQuery.setEnabled(false);
+			btnLoadNN.setEnabled(false);
 			
 			if (!validateInputs()) {
 				textFieldNInputs.setEditable(true);
@@ -429,7 +437,7 @@ public class DriverUI extends JFrame {
 				textFieldCrossover.setEditable(true);
 				textFieldMutation.setEditable(true);
 				textFieldTournamentSize.setEditable(true);
-				comboBoxAF.setEditable(true);
+				comboBoxAF.setEnabled(true);
 				textFieldNIterations.setEditable(true);
 				textFieldErrorUntil.setEditable(true);
 				btnStop.setEnabled(false);
@@ -490,10 +498,13 @@ public class DriverUI extends JFrame {
 			textFieldCrossover.setEditable(true);
 			textFieldMutation.setEditable(true);
 			textFieldTournamentSize.setEditable(true);
-			comboBoxAF.setEditable(true);
+			comboBoxAF.setEnabled(true);
 			textFieldNIterations.setEditable(true);
 			textFieldErrorUntil.setEditable(true);
 			btnStop.setEnabled(false);
+			btnQuery.setEnabled(true);
+			btnSaveNN.setEnabled(true);
+			btnLoadNN.setEnabled(true);
 			return null;
 			
 		}
@@ -504,6 +515,7 @@ public class DriverUI extends JFrame {
 		@Override
 		protected Void doInBackground() throws Exception {
 			btnStop.setEnabled(true);
+			btnQuery.setEnabled(false);
 			textFieldNInputs.setEditable(false);
 			textFieldNOutputs.setEditable(false);
 			textFieldLayers.setEditable(false);
@@ -512,9 +524,11 @@ public class DriverUI extends JFrame {
 			textFieldCrossover.setEditable(false);
 			textFieldMutation.setEditable(false);
 			textFieldTournamentSize.setEditable(false);
-			comboBoxAF.setEditable(false);
+			comboBoxAF.setEnabled(false);
 			textFieldNIterations.setEditable(false);
 			textFieldErrorUntil.setEditable(false);
+			btnSaveNN.setEnabled(false);
+			btnLoadNN.setEnabled(false);
 			
 			if (!validateInputs()) {
 				textFieldNInputs.setEditable(true);
@@ -525,7 +539,7 @@ public class DriverUI extends JFrame {
 				textFieldCrossover.setEditable(true);
 				textFieldMutation.setEditable(true);
 				textFieldTournamentSize.setEditable(true);
-				comboBoxAF.setEditable(true);
+				comboBoxAF.setEnabled(true);
 				textFieldNIterations.setEditable(true);
 				textFieldErrorUntil.setEditable(true);
 				btnStop.setEnabled(false);
@@ -577,7 +591,7 @@ public class DriverUI extends JFrame {
 					tournSize, learningData, af);
 			
 			result = moon.optimizeUntil(error);
-			
+
 			textFieldNInputs.setEditable(true);
 			textFieldNOutputs.setEditable(true);
 			textFieldLayers.setEditable(true);
@@ -586,10 +600,13 @@ public class DriverUI extends JFrame {
 			textFieldCrossover.setEditable(true);
 			textFieldMutation.setEditable(true);
 			textFieldTournamentSize.setEditable(true);
-			comboBoxAF.setEditable(true);
+			comboBoxAF.setEnabled(true);
 			textFieldNIterations.setEditable(true);
 			textFieldErrorUntil.setEditable(true);
 			btnStop.setEnabled(false);
+			btnQuery.setEnabled(true);
+			btnSaveNN.setEnabled(true);
+			btnLoadNN.setEnabled(true);
 			return null;
 			
 		}
