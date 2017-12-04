@@ -11,8 +11,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 
@@ -32,7 +34,11 @@ public class DriverUI extends JFrame {
 	private JButton btnStop;
 	private JComboBox<String> comboBoxAF;
 	private JButton btnTrain;
-	
+	private JTextField textFieldFileName;
+	private JButton btnFind;
+	private JButton btnLoad;
+
+	private DataSet learningData;
 	public NeuralNetwork result;
 	public GeneticAlgorithm moon;
 
@@ -56,6 +62,11 @@ public class DriverUI extends JFrame {
 	 * Create the frame.
 	 */
 	public DriverUI() {
+		NeuralNetwork result;
+		GeneticAlgorithm moon;
+		int nInputs=0;
+		int nOutputs;
+		
 		setTitle("Evolutionary Neural Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 583, 392);
@@ -92,6 +103,7 @@ public class DriverUI extends JFrame {
 			}
 		});
 		btnTrain.setBounds(339, 277, 89, 23);
+		btnTrain.setEnabled(false);
 		contentPane.add(btnTrain);
 		
 		btnStop = new JButton("Stop");
@@ -105,11 +117,68 @@ public class DriverUI extends JFrame {
 		});
 		contentPane.add(btnStop);
 		
+		btnFind = new JButton("Find");
+		btnFind.setBounds(285, 178, 89, 23);
+		btnFind.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fileChooser = new JFileChooser();
+				int action = JFileChooser.ERROR_OPTION;
+				action = fileChooser.showOpenDialog(null);
+				if (action == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					textFieldFileName.setText(selectedFile.getPath());
+				}
+				btnTrain.setEnabled(true);
+			}
+		});
+		contentPane.add(btnFind);
+		
+		btnLoad = new JButton("Load Data");
+		btnLoad.setBounds(285, 203, 89, 23);
+		btnLoad.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (textFieldFileName.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "No file selected");
+					return;
+				}
+			
+				if (textFieldNInputs.getText().isEmpty() || textFieldNOutputs.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Invalid Inputs");
+					return;
+				}
+				
+				int nInputs = Integer.parseInt(textFieldNInputs.getText());
+				int nOutputs = Integer.parseInt(textFieldNOutputs.getText());
+				
+				if (nInputs <= 0 || nOutputs <= 0) {
+					JOptionPane.showMessageDialog(null, "Invalid Inputs");
+					return;
+				}
+				
+				DataSet dataset = null;
+				try {
+					dataset = new DataSet(textFieldFileName.getText(), nInputs, nOutputs);
+				} catch (IOException e) {
+					return;
+				}
+				
+				learningData = dataset;
+				btnTrain.setEnabled(true);
+			}
+		});
+		contentPane.add(btnLoad);
+		
 
 		
 		JLabel lblNewLabel = new JLabel("Layers");
 		lblNewLabel.setBounds(10, 156, 46, 14);
 		contentPane.add(lblNewLabel);
+		
+		JLabel lblFileName = new JLabel("Data File");
+		lblFileName.setBounds(215, 155, 89, 14);
+		contentPane.add(lblFileName);
 		
 		JLabel lblNeuronsPerLayer = new JLabel("Neurons per Layer");
 		lblNeuronsPerLayer.setBounds(10, 181, 167, 14);
@@ -175,6 +244,12 @@ public class DriverUI extends JFrame {
 		contentPane.add(textFieldMutation);
 		textFieldMutation.setColumns(10);
 		
+		textFieldFileName = new JTextField();
+		textFieldFileName.setBounds(285, 153, 86, 20);
+		contentPane.add(textFieldFileName);
+		textFieldFileName.setEditable(false);
+		textFieldFileName.setColumns(10);
+		
 		JLabel lblTournamentSize = new JLabel("Tournament Size");
 		lblTournamentSize.setBounds(10, 281, 167, 14);
 		contentPane.add(lblTournamentSize);
@@ -201,7 +276,20 @@ public class DriverUI extends JFrame {
 		JButton btnQuery = new JButton("Query");
 		btnQuery.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+//				DataSet learningData = new DataSet(nInputs, nOutputs);
+//				addData(learningData);
+//				
+//				String nnInputTemp = textFieldInput.getText();
+//				nnInputTemp.split(" ");
+//				double[] input;
+//				for(int i = 0; i < nnInputTemp.length(); i++)
+//				{
+//				    input[i] = Double.parseDouble(nnInputTemp[i]);
+//				}
+//			
+//				result.feedForward(input, learningData);
+				System.out.println(nInputs);
+
 			}
 		});
 		btnQuery.setBounds(10, 36, 89, 23);
@@ -314,14 +402,6 @@ public class DriverUI extends JFrame {
 				af = ActivationFunction.TANH;
 			} else {
 				af = ActivationFunction.SIGMOID_STEP;
-			}
-			
-			DataSet learningData;
-			try {
-				learningData = new DataSet("wineData", nInputs, nOutputs);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
 			}
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
