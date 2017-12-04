@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
+import javax.swing.JTextPane;
 
 public class DriverUI extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -68,7 +69,7 @@ public class DriverUI extends JFrame {
 		
 		setTitle("Evolutionary Neural Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 583, 392);
+		setBounds(100, 100, 713, 497);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -80,7 +81,7 @@ public class DriverUI extends JFrame {
 		
 		textFieldOutput = new JTextField();
 		textFieldOutput.setEditable(false);
-		textFieldOutput.setBounds(278, 8, 150, 20);
+		textFieldOutput.setBounds(278, 8, 408, 20);
 		contentPane.add(textFieldOutput);
 		textFieldOutput.setColumns(10);
 		
@@ -97,12 +98,12 @@ public class DriverUI extends JFrame {
 				System.out.println("ran");
 			}
 		});
-		btnTrain.setBounds(408, 302, 89, 23);
+		btnTrain.setBounds(347, 302, 89, 23);
 		btnTrain.setEnabled(false);
 		contentPane.add(btnTrain);
 		
 		btnStop = new JButton("Stop");
-		btnStop.setBounds(408, 268, 89, 23);
+		btnStop.setBounds(347, 268, 89, 23);
 		btnStop.setEnabled(false);
 		btnStop.addActionListener(new ActionListener() {
 			@Override
@@ -113,7 +114,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(btnStop);
 		
 		btnFind = new JButton("Find");
-		btnFind.setBounds(408, 177, 89, 23);
+		btnFind.setBounds(323, 109, 113, 23);
 		btnFind.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -129,7 +130,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(btnFind);
 		
 		btnLoad = new JButton("Load Data");
-		btnLoad.setBounds(408, 202, 89, 23);
+		btnLoad.setBounds(323, 143, 113, 23);
 		btnLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -171,7 +172,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(lblNewLabel);
 		
 		JLabel lblFileName = new JLabel("Data File");
-		lblFileName.setBounds(339, 156, 89, 14);
+		lblFileName.setBounds(267, 84, 89, 14);
 		contentPane.add(lblFileName);
 		
 		JLabel lblNeuronsPerLayer = new JLabel("Neurons per Layer");
@@ -239,7 +240,7 @@ public class DriverUI extends JFrame {
 		textFieldMutation.setColumns(10);
 		
 		textFieldFileName = new JTextField();
-		textFieldFileName.setBounds(411, 153, 86, 20);
+		textFieldFileName.setBounds(323, 81, 363, 20);
 		contentPane.add(textFieldFileName);
 		textFieldFileName.setEditable(false);
 		textFieldFileName.setColumns(10);
@@ -263,7 +264,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(lblInput);
 		
 		textFieldInput = new JTextField();
-		textFieldInput.setBounds(45, 8, 148, 20);
+		textFieldInput.setBounds(45, 8, 184, 20);
 		contentPane.add(textFieldInput);
 		textFieldInput.setColumns(10);
 		
@@ -292,6 +293,23 @@ public class DriverUI extends JFrame {
 		});
 		btnQuery.setBounds(10, 36, 89, 23);
 		contentPane.add(btnQuery);
+		
+		JButton btnSaveNN = new JButton("Save NN");
+		btnSaveNN.setBounds(10, 400, 89, 23);
+		contentPane.add(btnSaveNN);
+		
+		JButton btnLoadNn = new JButton("Load NN");
+		btnLoadNn.setBounds(10, 425, 89, 23);
+		contentPane.add(btnLoadNn);
+		
+		JLabel lblError = new JLabel("Error");
+		lblError.setBounds(446, 113, 46, 14);
+		contentPane.add(lblError);
+		
+		JTextPane textPaneError = new JTextPane();
+		textPaneError.setEditable(false);
+		textPaneError.setBounds(487, 109, 199, 286);
+		contentPane.add(textPaneError);
 	}
 	
 	private boolean validateInputs() {
