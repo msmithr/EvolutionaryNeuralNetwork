@@ -62,7 +62,6 @@ public class DriverUI extends JFrame {
 	 * Create the frame.
 	 */
 	public DriverUI() {
-		NeuralNetwork result;
 		GeneticAlgorithm moon;
 		int nInputs=0;
 		int nOutputs;
@@ -272,19 +271,23 @@ public class DriverUI extends JFrame {
 		JButton btnQuery = new JButton("Query");
 		btnQuery.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				DataSet learningData = new DataSet(nInputs, nOutputs);
-//				addData(learningData);
-//				
-//				String nnInputTemp = textFieldInput.getText();
-//				nnInputTemp.split(" ");
-//				double[] input;
-//				for(int i = 0; i < nnInputTemp.length(); i++)
-//				{
-//				    input[i] = Double.parseDouble(nnInputTemp[i]);
-//				}
-//			
-//				result.feedForward(input, learningData);
-				System.out.println(nInputs);
+				
+				String[] nnInputTemp = textFieldInput.getText().split(" ");
+				double[] input = new double[Integer.parseInt(textFieldNInputs.getText())];
+				double[] output;
+				for(int i = 0; i < nnInputTemp.length; i++)
+				{
+				    input[i] = Double.parseDouble(nnInputTemp[i]);
+				}
+			
+				output = result.feedForward(input);
+				String toReturn = "";
+				for (int i = 0; i < output.length; i++) {
+					toReturn += Double.toString(output[i]) + " ";
+				}
+				
+				textFieldOutput.setText(toReturn);
+				System.out.println(VectorOperations.toString(output));
 
 			}
 		});
