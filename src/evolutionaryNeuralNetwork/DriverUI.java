@@ -75,10 +75,6 @@ public class DriverUI extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblDataEntry = new JLabel("Data Entry");
-		lblDataEntry.setBounds(278, 84, 74, 14);
-		contentPane.add(lblDataEntry);
-		
 		JLabel lblOutput = new JLabel("Output");
 		lblOutput.setBounds(239, 11, 46, 14);
 		contentPane.add(lblOutput);
