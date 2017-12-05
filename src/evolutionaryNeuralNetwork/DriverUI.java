@@ -131,32 +131,11 @@ public class DriverUI extends JFrame {
 		});
 		contentPane.add(btnStop);
 		
-		btnFind = new JButton("Find");
-		btnFind.setBounds(283, 109, 113, 23);
-		btnFind.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fileChooser = new JFileChooser();
-				int action = JFileChooser.ERROR_OPTION;
-				action = fileChooser.showOpenDialog(null);
-				if (action == JFileChooser.APPROVE_OPTION) {
-					File selectedFile = fileChooser.getSelectedFile();
-					textFieldFileName.setText(selectedFile.getPath());
-				}
-			}
-		});
-		contentPane.add(btnFind);
-		
 		btnLoad = new JButton("Load Data");
 		btnLoad.setBounds(283, 143, 113, 23);
 		btnLoad.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (textFieldFileName.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(null, "No file selected");
-					return;
-				}
-			
+			public void actionPerformed(ActionEvent arg0) {	
 				if (textFieldNInputs.getText().isEmpty() || textFieldNOutputs.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Invalid Inputs");
 					return;
@@ -170,9 +149,18 @@ public class DriverUI extends JFrame {
 					return;
 				}
 				
+				JFileChooser fileChooser = new JFileChooser();
+				int action = JFileChooser.ERROR_OPTION;
+				action = fileChooser.showOpenDialog(null);
+				String filename = "";
+				if (action == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					filename = selectedFile.getPath();
+				}
+				
 				DataSet dataset = null;
 				try {
-					dataset = new DataSet(textFieldFileName.getText(), nInputs, nOutputs);
+					dataset = new DataSet(filename, nInputs, nOutputs);
 				} catch (IOException e) {
 					return;
 				}
@@ -180,6 +168,7 @@ public class DriverUI extends JFrame {
 				learningData = dataset;
 				btnTrainIterations.setEnabled(true);
 				btnTrainUntilError.setEnabled(true);
+				JOptionPane.showMessageDialog(null, "Data loaded: " + filename);
 			}
 		});
 		contentPane.add(btnLoad);
@@ -189,10 +178,6 @@ public class DriverUI extends JFrame {
 		JLabel lblNewLabel = new JLabel("Layers");
 		lblNewLabel.setBounds(10, 156, 74, 14);
 		contentPane.add(lblNewLabel);
-		
-		JLabel lblFileName = new JLabel("Data File");
-		lblFileName.setBounds(267, 84, 89, 14);
-		contentPane.add(lblFileName);
 		
 		JLabel lblNeuronsPerLayer = new JLabel("Neurons per Layer");
 		lblNeuronsPerLayer.setBounds(10, 181, 167, 14);
@@ -229,13 +214,13 @@ public class DriverUI extends JFrame {
 		textFieldNOutputs.setColumns(10);
 		
 		textFieldLayers = new JTextField();
-		textFieldLayers.setText("1");
+		textFieldLayers.setText("2");
 		textFieldLayers.setBounds(187, 153, 86, 20);
 		contentPane.add(textFieldLayers);
 		textFieldLayers.setColumns(10);
 		
 		textFieldNeuronsLayer = new JTextField();
-		textFieldNeuronsLayer.setText("1");
+		textFieldNeuronsLayer.setText("10");
 		textFieldNeuronsLayer.setBounds(187, 178, 86, 20);
 		contentPane.add(textFieldNeuronsLayer);
 		textFieldNeuronsLayer.setColumns(10);
@@ -257,12 +242,6 @@ public class DriverUI extends JFrame {
 		textFieldMutation.setBounds(187, 253, 86, 20);
 		contentPane.add(textFieldMutation);
 		textFieldMutation.setColumns(10);
-		
-		textFieldFileName = new JTextField();
-		textFieldFileName.setBounds(323, 81, 415, 20);
-		contentPane.add(textFieldFileName);
-		textFieldFileName.setEditable(false);
-		textFieldFileName.setColumns(10);
 		
 		JLabel lblTournamentSize = new JLabel("Tournament Size");
 		lblTournamentSize.setBounds(10, 281, 167, 14);
@@ -290,7 +269,6 @@ public class DriverUI extends JFrame {
 		btnQuery = new JButton("Query");
 		btnQuery.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				String[] nnInputTemp = textFieldInput.getText().split(" ");
 				double[] input = new double[Integer.parseInt(textFieldNInputs.getText())];
 				double[] output;
@@ -306,8 +284,6 @@ public class DriverUI extends JFrame {
 				}
 				
 				textFieldOutput.setText(toReturn);
-				System.out.println(VectorOperations.toString(output));
-
 			}
 		});
 		btnQuery.setBounds(10, 36, 89, 23);
@@ -317,10 +293,65 @@ public class DriverUI extends JFrame {
 		btnSaveNN = new JButton("Save NN");
 		btnSaveNN.setBounds(10, 400, 113, 23);
 		btnSaveNN.setEnabled(false);
+		btnSaveNN.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				int action = JFileChooser.ERROR_OPTION;
+				action = fileChooser.showOpenDialog(null);
+				String filename = "";
+				if (action == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					filename = selectedFile.getPath();
+				}
+				
+				try {
+					result.save(filename);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		contentPane.add(btnSaveNN);
 		
 		btnLoadNN = new JButton("Load NN");
 		btnLoadNN.setBounds(10, 425, 113, 23);
+		btnLoadNN.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {			
+				JFileChooser fileChooser = new JFileChooser();
+				int action = JFileChooser.ERROR_OPTION;
+				action = fileChooser.showOpenDialog(null);
+				String filename = "";
+				if (action == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					filename = selectedFile.getPath();
+				}
+			
+				try {
+					result = new NeuralNetwork(filename);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+				textFieldNInputs.setEditable(true);
+				textFieldNOutputs.setEditable(true);
+				textFieldLayers.setEditable(true);
+				textFieldNeuronsLayer.setEditable(true);
+				textFieldPopSize.setEditable(true);
+				textFieldCrossover.setEditable(true);
+				textFieldMutation.setEditable(true);
+				textFieldTournamentSize.setEditable(true);
+				comboBoxAF.setEnabled(true);
+				textFieldNIterations.setEditable(true);
+				textFieldErrorUntil.setEditable(true);
+				btnStop.setEnabled(false);
+				btnQuery.setEnabled(true);
+				btnSaveNN.setEnabled(true);
+				btnLoadNN.setEnabled(true);
+				
+				JOptionPane.showMessageDialog(null, "Neural Network loaded: " + filename);
+				return;
+			}
+		});
 		contentPane.add(btnLoadNN);
 		
 		JLabel lblError = new JLabel("Error");
