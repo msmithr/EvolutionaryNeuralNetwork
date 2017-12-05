@@ -1,5 +1,8 @@
 package evolutionaryNeuralNetwork;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -16,6 +19,38 @@ public class DataSet implements DataSetInterface{
 		data = new ArrayList<dataElement>();
 		this.nInputs = nInputs;
 		this.nOutputs = nOutputs;
+	}
+	
+	public DataSet(String filename, int nInputs, int nOutputs) throws IOException {
+		FileReader filereader = new FileReader(filename);
+		BufferedReader bufferedReader = new BufferedReader(filereader);
+		data = new ArrayList<dataElement>();
+		String line;
+		double[] temp1 = new double[nInputs];
+		double[] temp2 = new double[nOutputs];
+		String[] split;
+		this.nInputs = nInputs;
+		this.nOutputs = nOutputs;
+		
+		int iteration = 0;
+		while ((line = bufferedReader.readLine()) != null) {
+			split = line.split(" ");
+			if (iteration % 2 == 0) {
+				temp1 = new double[nInputs];
+				for (int i = 0; i < split.length; i++) {
+					temp1[i] = Double.parseDouble(split[i]);
+				}
+			} else {
+				temp2 = new double[nOutputs];
+				for (int i = 0; i < split.length; i++) {
+					temp2[i] = Double.parseDouble(split[i]);
+				}
+				addData(temp1, temp2);
+			}
+			iteration++;
+		}
+		
+		bufferedReader.close();
 	}
 	
 	public void addData(double[] inputs, double[] outputs) {
@@ -50,35 +85,6 @@ public class DataSet implements DataSetInterface{
 		Collections.shuffle(data);
 	}
 	
-	
-	public void normalize() {
-		this.max = new double[nInputs];
-		this.min = new double[nInputs];
-		
-		for (int i = 0; i < nInputs; i++) {
-			// find min and max values for the variable
-			double min = Double.MAX_VALUE;
-			double max = Double.MIN_VALUE;
-			for (int j = 0; j < data.size(); j++) {
-				if (data.get(j).getInputs()[i] > max) {
-					max = data.get(j).getInputs()[i];
-				} 
-				if (data.get(i).getInputs()[i] < min) {
-					min = data.get(j).getInputs()[i];
-				}
-			}
-			
-			this.max[i] = max;
-			this.min[i] = min;
-			
-			// normalize the variable in each of the data elements
-			for (int j = 0; j < data.size(); j++) {
-				data.get(j).normalize(i, min, max);
-			}
-		}
-		
-	}
-	
 	private class dataElement {
 		private double[] inputs;
 		private double[] outputs;
@@ -95,10 +101,5 @@ public class DataSet implements DataSetInterface{
 		public double[] getInputs() {
 			return this.inputs;
 		}
-		
-		public void normalize(int index, double min, double max) {
-			inputs[index] = (inputs[index] - min) / (max - min);
-		}
-		
 	} // end class
 } // end class
