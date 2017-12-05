@@ -73,9 +73,6 @@ public class DriverUI extends JFrame {
 	 * Create the frame.
 	 */
 	public DriverUI() {
-		GeneticAlgorithm moon;
-		int nInputs=0;
-		int nOutputs;
 		
 		setTitle("Evolutionary Neural Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -132,7 +129,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(btnStop);
 		
 		btnLoad = new JButton("Load Data");
-		btnLoad.setBounds(283, 143, 113, 23);
+		btnLoad.setBounds(323, 138, 113, 23);
 		btnLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {	
@@ -196,20 +193,20 @@ public class DriverUI extends JFrame {
 		contentPane.add(lblMutationPropability);
 		
 		JLabel lblNumberOfInputs = new JLabel("Number of Inputs");
-		lblNumberOfInputs.setBounds(10, 84, 113, 14);
+		lblNumberOfInputs.setBounds(10, 84, 136, 14);
 		contentPane.add(lblNumberOfInputs);
 		
 		JLabel lblNumberOfOutputs = new JLabel("Number of Outputs");
-		lblNumberOfOutputs.setBounds(10, 109, 113, 14);
+		lblNumberOfOutputs.setBounds(10, 109, 136, 14);
 		contentPane.add(lblNumberOfOutputs);
 		
 		textFieldNInputs = new JTextField();
-		textFieldNInputs.setBounds(133, 81, 86, 20);
+		textFieldNInputs.setBounds(156, 81, 86, 20);
 		contentPane.add(textFieldNInputs);
 		textFieldNInputs.setColumns(10);
 		
 		textFieldNOutputs = new JTextField();
-		textFieldNOutputs.setBounds(133, 106, 86, 20);
+		textFieldNOutputs.setBounds(156, 106, 86, 20);
 		contentPane.add(textFieldNOutputs);
 		textFieldNOutputs.setColumns(10);
 		
