@@ -76,19 +76,19 @@ public class DriverUI extends JFrame {
 		
 		setTitle("Evolutionary Neural Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 764, 497);
+		setBounds(100, 100, 790, 497);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JLabel lblOutput = new JLabel("Output");
-		lblOutput.setBounds(239, 11, 46, 14);
+		lblOutput.setBounds(239, 11, 64, 14);
 		contentPane.add(lblOutput);
 		
 		textFieldOutput = new JTextField();
 		textFieldOutput.setEditable(false);
-		textFieldOutput.setBounds(278, 8, 460, 20);
+		textFieldOutput.setBounds(300, 8, 464, 20);
 		contentPane.add(textFieldOutput);
 		textFieldOutput.setColumns(10);
 		
@@ -129,7 +129,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(btnStop);
 		
 		btnLoad = new JButton("Load Data");
-		btnLoad.setBounds(323, 138, 113, 23);
+		btnLoad.setBounds(283, 138, 113, 23);
 		btnLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {	
@@ -259,7 +259,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(lblInput);
 		
 		textFieldInput = new JTextField();
-		textFieldInput.setBounds(45, 8, 184, 20);
+		textFieldInput.setBounds(53, 8, 176, 20);
 		contentPane.add(textFieldInput);
 		textFieldInput.setColumns(10);
 		
@@ -356,7 +356,7 @@ public class DriverUI extends JFrame {
 		contentPane.add(lblError);
 		
 		JLabel lblNumberOfIterations = new JLabel("Number of Iterations");
-		lblNumberOfIterations.setBounds(10, 331, 127, 14);
+		lblNumberOfIterations.setBounds(10, 331, 176, 14);
 		contentPane.add(lblNumberOfIterations);
 		
 		textFieldNIterations = new JTextField();
@@ -366,7 +366,7 @@ public class DriverUI extends JFrame {
 		textFieldNIterations.setColumns(10);
 		
 		JLabel lblErrorToOptimize = new JLabel("Error to Optimize Until");
-		lblErrorToOptimize.setBounds(10, 356, 127, 14);
+		lblErrorToOptimize.setBounds(10, 356, 176, 14);
 		contentPane.add(lblErrorToOptimize);
 		
 		textFieldErrorUntil = new JTextField();
@@ -376,7 +376,7 @@ public class DriverUI extends JFrame {
 		textFieldErrorUntil.setColumns(10);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(446, 112, 292, 336);
+		scrollPane.setBounds(446, 112, 318, 336);
 		contentPane.add(scrollPane);
 		
 		JTextArea textAreaError = new JTextArea();
