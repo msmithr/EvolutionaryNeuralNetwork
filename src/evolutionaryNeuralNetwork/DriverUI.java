@@ -199,13 +199,13 @@ public class DriverUI extends JFrame {
 		lblPopulationSize.setBounds(10, 206, 167, 14);
 		contentPane.add(lblPopulationSize);
 		
-		JLabel lblCrossoverPropability = new JLabel("Crossover Propability");
-		lblCrossoverPropability.setBounds(10, 231, 167, 14);
-		contentPane.add(lblCrossoverPropability);
+		JLabel lblCrossoverprobability = new JLabel("Crossover probability");
+		lblCrossoverprobability.setBounds(10, 231, 167, 14);
+		contentPane.add(lblCrossoverprobability);
 		
-		JLabel lblMutationPropability = new JLabel("Mutation Propability");
-		lblMutationPropability.setBounds(10, 256, 167, 14);
-		contentPane.add(lblMutationPropability);
+		JLabel lblMutationprobability = new JLabel("Mutation probability");
+		lblMutationprobability.setBounds(10, 256, 167, 14);
+		contentPane.add(lblMutationprobability);
 		
 		JLabel lblNumberOfInputs = new JLabel("Number of Inputs");
 		lblNumberOfInputs.setBounds(10, 84, 136, 14);
@@ -426,10 +426,10 @@ public class DriverUI extends JFrame {
 		int popSize = Integer.parseInt(popTemp);
 		
 		String crossTemp = textFieldCrossover.getText();
-		double crossoverPropability = Double.parseDouble(crossTemp);
+		double crossoverprobability = Double.parseDouble(crossTemp);
 		
 		String mutantTemp = textFieldMutation.getText();
-		double mutationPropability = Double.parseDouble(mutantTemp);
+		double mutationprobability = Double.parseDouble(mutantTemp);
 		
 		String tournamentTemp = textFieldTournamentSize.getText();
 		int tournSize = Integer.parseInt(tournamentTemp);
@@ -440,10 +440,10 @@ public class DriverUI extends JFrame {
 			nLayers <= 0 ||
 			nNeurons <= 0 ||
 			popSize <= 0 ||
-			crossoverPropability < 0 ||
-			crossoverPropability > 1 ||
-			mutationPropability < 0 ||
-			mutationPropability > 1 ||
+			crossoverprobability < 0 ||
+			crossoverprobability > 1 ||
+			mutationprobability < 0 ||
+			mutationprobability > 1 ||
 			tournSize <= 0
 			) 
 		{
@@ -504,10 +504,10 @@ public class DriverUI extends JFrame {
 			int popSize = Integer.parseInt(popTemp);
 			
 			String crossTemp = textFieldCrossover.getText();
-			double crossoverPropability = Double.parseDouble(crossTemp);
+			double crossoverprobability = Double.parseDouble(crossTemp);
 			
 			String mutantTemp = textFieldMutation.getText();
-			double mutationPropability = Double.parseDouble(mutantTemp);
+			double mutationprobability = Double.parseDouble(mutantTemp);
 			
 			String tournamentTemp = textFieldTournamentSize.getText();
 			int tournSize = Integer.parseInt(tournamentTemp);
@@ -528,7 +528,7 @@ public class DriverUI extends JFrame {
 			int iterations = Integer.parseInt(iterateTemp);
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
-					popSize, crossoverPropability, mutationPropability, 0.4,
+					popSize, crossoverprobability, mutationprobability, 0.4,
 					tournSize, learningData, af);
 			
 			result = moon.optimize(iterations);
@@ -608,10 +608,10 @@ public class DriverUI extends JFrame {
 			int popSize = Integer.parseInt(popTemp);
 			
 			String crossTemp = textFieldCrossover.getText();
-			double crossoverPropability = Double.parseDouble(crossTemp);
+			double crossoverprobability = Double.parseDouble(crossTemp);
 			
 			String mutantTemp = textFieldMutation.getText();
-			double mutationPropability = Double.parseDouble(mutantTemp);
+			double mutationprobability = Double.parseDouble(mutantTemp);
 			
 			String tournamentTemp = textFieldTournamentSize.getText();
 			int tournSize = Integer.parseInt(tournamentTemp);
@@ -632,7 +632,7 @@ public class DriverUI extends JFrame {
 			double error = Double.parseDouble(errorTemp);
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
-					popSize, crossoverPropability, mutationPropability, 0.4,
+					popSize, crossoverprobability, mutationprobability, 0.4,
 					tournSize, learningData, af);
 			
 			result = moon.optimizeUntil(error);
