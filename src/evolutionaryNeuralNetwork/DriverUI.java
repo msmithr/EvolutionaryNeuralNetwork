@@ -24,6 +24,9 @@ import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import java.awt.ScrollPane;
 
+
+// TODO: do any of this in a better way
+
 public class DriverUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -37,6 +40,7 @@ public class DriverUI extends JFrame {
 	private JTextField textFieldMutation;
 	private JTextField textFieldTournamentSize;
 	private JTextField textFieldInput;
+	private JTextField textFieldMigrationProbability;
 	private JButton btnStop;
 	private JComboBox<String> comboBoxAF;
 	private JButton btnTrainIterations;
@@ -103,7 +107,7 @@ public class DriverUI extends JFrame {
 				new TrainIterationsWorker().execute();
 			}
 		});
-		btnTrainIterations.setBounds(283, 327, 153, 23);
+		btnTrainIterations.setBounds(283, 352, 153, 23);
 		btnTrainIterations.setEnabled(false);
 		contentPane.add(btnTrainIterations);
 		
@@ -114,11 +118,11 @@ public class DriverUI extends JFrame {
 				new TrainUntilWorker().execute();
 			}
 		});
-		btnTrainUntilError.setBounds(283, 352, 153, 23);
+		btnTrainUntilError.setBounds(283, 378, 153, 23);
 		contentPane.add(btnTrainUntilError);
 		
 		btnStop = new JButton("Stop");
-		btnStop.setBounds(283, 378, 153, 23);
+		btnStop.setBounds(283, 404, 153, 23);
 		btnStop.setEnabled(false);
 		btnStop.addActionListener(new ActionListener() {
 			@Override
@@ -131,6 +135,7 @@ public class DriverUI extends JFrame {
 				textFieldPopSize.setEditable(true);
 				textFieldCrossover.setEditable(true);
 				textFieldMutation.setEditable(true);
+				textFieldMigrationProbability.setEditable(true);
 				textFieldTournamentSize.setEditable(true);
 				comboBoxAF.setEnabled(true);
 				textFieldNIterations.setEditable(true);
@@ -199,13 +204,13 @@ public class DriverUI extends JFrame {
 		lblPopulationSize.setBounds(10, 206, 167, 14);
 		contentPane.add(lblPopulationSize);
 		
-		JLabel lblCrossoverPropability = new JLabel("Crossover Propability");
-		lblCrossoverPropability.setBounds(10, 231, 167, 14);
-		contentPane.add(lblCrossoverPropability);
+		JLabel lblCrossoverprobability = new JLabel("Crossover probability");
+		lblCrossoverprobability.setBounds(10, 231, 167, 14);
+		contentPane.add(lblCrossoverprobability);
 		
-		JLabel lblMutationPropability = new JLabel("Mutation Propability");
-		lblMutationPropability.setBounds(10, 256, 167, 14);
-		contentPane.add(lblMutationPropability);
+		JLabel lblMutationprobability = new JLabel("Mutation probability");
+		lblMutationprobability.setBounds(10, 256, 167, 14);
+		contentPane.add(lblMutationprobability);
 		
 		JLabel lblNumberOfInputs = new JLabel("Number of Inputs");
 		lblNumberOfInputs.setBounds(10, 84, 136, 14);
@@ -351,6 +356,7 @@ public class DriverUI extends JFrame {
 				textFieldPopSize.setEditable(true);
 				textFieldCrossover.setEditable(true);
 				textFieldMutation.setEditable(true);
+				textFieldMigrationProbability.setEditable(true);
 				textFieldTournamentSize.setEditable(true);
 				comboBoxAF.setEnabled(true);
 				textFieldNIterations.setEditable(true);
@@ -366,27 +372,37 @@ public class DriverUI extends JFrame {
 		});
 		contentPane.add(btnLoadNN);
 		
-		JLabel lblError = new JLabel("Error");
+		JLabel lblError = new JLabel("Output");
 		lblError.setBounds(406, 113, 46, 14);
 		contentPane.add(lblError);
 		
+		JLabel lblMigrationProbability = new JLabel("Migration Probability");
+		lblMigrationProbability.setBounds(10, 331, 176, 14);
+		contentPane.add(lblMigrationProbability);
+		
+		textFieldMigrationProbability = new JTextField();
+		textFieldMigrationProbability.setText("0.4");
+		textFieldMigrationProbability.setBounds(187, 331, 86, 20);
+		contentPane.add(textFieldMigrationProbability);
+		textFieldMigrationProbability.setColumns(10);
+		
 		JLabel lblNumberOfIterations = new JLabel("Number of Iterations");
-		lblNumberOfIterations.setBounds(10, 331, 176, 14);
+		lblNumberOfIterations.setBounds(10, 356, 176, 14);
 		contentPane.add(lblNumberOfIterations);
 		
 		textFieldNIterations = new JTextField();
 		textFieldNIterations.setText("5000");
-		textFieldNIterations.setBounds(187, 328, 86, 20);
+		textFieldNIterations.setBounds(187, 353, 86, 20);
 		contentPane.add(textFieldNIterations);
 		textFieldNIterations.setColumns(10);
 		
 		JLabel lblErrorToOptimize = new JLabel("Error to Optimize Until");
-		lblErrorToOptimize.setBounds(10, 356, 176, 14);
+		lblErrorToOptimize.setBounds(10, 381, 176, 14);
 		contentPane.add(lblErrorToOptimize);
 		
 		textFieldErrorUntil = new JTextField();
 		textFieldErrorUntil.setText("25.50");
-		textFieldErrorUntil.setBounds(187, 353, 86, 20);
+		textFieldErrorUntil.setBounds(187, 378, 86, 20);
 		contentPane.add(textFieldErrorUntil);
 		textFieldErrorUntil.setColumns(10);
 		
@@ -426,10 +442,13 @@ public class DriverUI extends JFrame {
 		int popSize = Integer.parseInt(popTemp);
 		
 		String crossTemp = textFieldCrossover.getText();
-		double crossoverPropability = Double.parseDouble(crossTemp);
+		double crossoverprobability = Double.parseDouble(crossTemp);
 		
 		String mutantTemp = textFieldMutation.getText();
-		double mutationPropability = Double.parseDouble(mutantTemp);
+		double mutationprobability = Double.parseDouble(mutantTemp);
+		
+		String migrationTemp = textFieldMigrationProbability.getText();
+		double migrationprobability = Double.parseDouble(migrationTemp);
 		
 		String tournamentTemp = textFieldTournamentSize.getText();
 		int tournSize = Integer.parseInt(tournamentTemp);
@@ -440,10 +459,12 @@ public class DriverUI extends JFrame {
 			nLayers <= 0 ||
 			nNeurons <= 0 ||
 			popSize <= 0 ||
-			crossoverPropability < 0 ||
-			crossoverPropability > 1 ||
-			mutationPropability < 0 ||
-			mutationPropability > 1 ||
+			crossoverprobability < 0 ||
+			crossoverprobability > 1 ||
+			mutationprobability < 0 ||
+			mutationprobability > 1 ||
+			migrationprobability < 0 ||
+			migrationprobability > 1 ||
 			tournSize <= 0
 			) 
 		{
@@ -463,6 +484,7 @@ public class DriverUI extends JFrame {
 			textFieldPopSize.setEditable(false);
 			textFieldCrossover.setEditable(false);
 			textFieldMutation.setEditable(false);
+			textFieldMigrationProbability.setEditable(false);
 			textFieldTournamentSize.setEditable(false);
 			comboBoxAF.setEnabled(false);
 			textFieldNIterations.setEditable(false);
@@ -479,6 +501,7 @@ public class DriverUI extends JFrame {
 				textFieldPopSize.setEditable(true);
 				textFieldCrossover.setEditable(true);
 				textFieldMutation.setEditable(true);
+				textFieldMigrationProbability.setEditable(true);
 				textFieldTournamentSize.setEditable(true);
 				comboBoxAF.setEnabled(true);
 				textFieldNIterations.setEditable(true);
@@ -504,13 +527,16 @@ public class DriverUI extends JFrame {
 			int popSize = Integer.parseInt(popTemp);
 			
 			String crossTemp = textFieldCrossover.getText();
-			double crossoverPropability = Double.parseDouble(crossTemp);
+			double crossoverprobability = Double.parseDouble(crossTemp);
 			
 			String mutantTemp = textFieldMutation.getText();
-			double mutationPropability = Double.parseDouble(mutantTemp);
+			double mutationprobability = Double.parseDouble(mutantTemp);
 			
 			String tournamentTemp = textFieldTournamentSize.getText();
 			int tournSize = Integer.parseInt(tournamentTemp);
+			
+			String migrationTemp = textFieldMigrationProbability.getText();
+			double migrationprobability = Double.parseDouble(migrationTemp);
 			
 			String afTemp = (String) comboBoxAF.getSelectedItem();
 			ActivationFunction af;
@@ -528,12 +554,10 @@ public class DriverUI extends JFrame {
 			int iterations = Integer.parseInt(iterateTemp);
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
-					popSize, crossoverPropability, mutationPropability, 0.4,
+					popSize, crossoverprobability, mutationprobability, migrationprobability,
 					tournSize, learningData, af);
 			
 			result = moon.optimize(iterations);
-			
-			System.out.println("I am here");
 			
 			textFieldNInputs.setEditable(true);
 			textFieldNOutputs.setEditable(true);
@@ -541,6 +565,7 @@ public class DriverUI extends JFrame {
 			textFieldNeuronsLayer.setEditable(true);
 			textFieldPopSize.setEditable(true);
 			textFieldCrossover.setEditable(true);
+			textFieldMigrationProbability.setEditable(true);
 			textFieldMutation.setEditable(true);
 			textFieldTournamentSize.setEditable(true);
 			comboBoxAF.setEnabled(true);
@@ -568,6 +593,7 @@ public class DriverUI extends JFrame {
 			textFieldPopSize.setEditable(false);
 			textFieldCrossover.setEditable(false);
 			textFieldMutation.setEditable(false);
+			textFieldMigrationProbability.setEditable(false);
 			textFieldTournamentSize.setEditable(false);
 			comboBoxAF.setEnabled(false);
 			textFieldNIterations.setEditable(false);
@@ -583,6 +609,7 @@ public class DriverUI extends JFrame {
 				textFieldPopSize.setEditable(true);
 				textFieldCrossover.setEditable(true);
 				textFieldMutation.setEditable(true);
+				textFieldMigrationProbability.setEditable(true);
 				textFieldTournamentSize.setEditable(true);
 				comboBoxAF.setEnabled(true);
 				textFieldNIterations.setEditable(true);
@@ -608,13 +635,16 @@ public class DriverUI extends JFrame {
 			int popSize = Integer.parseInt(popTemp);
 			
 			String crossTemp = textFieldCrossover.getText();
-			double crossoverPropability = Double.parseDouble(crossTemp);
+			double crossoverprobability = Double.parseDouble(crossTemp);
 			
 			String mutantTemp = textFieldMutation.getText();
-			double mutationPropability = Double.parseDouble(mutantTemp);
+			double mutationprobability = Double.parseDouble(mutantTemp);
 			
 			String tournamentTemp = textFieldTournamentSize.getText();
 			int tournSize = Integer.parseInt(tournamentTemp);
+			
+			String migrationTemp = textFieldMigrationProbability.getText();
+			double migrationprobability = Double.parseDouble(migrationTemp);
 			
 			String afTemp = (String) comboBoxAF.getSelectedItem();
 			ActivationFunction af;
@@ -632,7 +662,7 @@ public class DriverUI extends JFrame {
 			double error = Double.parseDouble(errorTemp);
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
-					popSize, crossoverPropability, mutationPropability, 0.4,
+					popSize, crossoverprobability, mutationprobability, migrationprobability,
 					tournSize, learningData, af);
 			
 			result = moon.optimizeUntil(error);
@@ -646,6 +676,7 @@ public class DriverUI extends JFrame {
 			textFieldPopSize.setEditable(true);
 			textFieldCrossover.setEditable(true);
 			textFieldMutation.setEditable(true);
+			textFieldMigrationProbability.setEditable(true);
 			textFieldTournamentSize.setEditable(true);
 			comboBoxAF.setEnabled(true);
 			textFieldNIterations.setEditable(true);
