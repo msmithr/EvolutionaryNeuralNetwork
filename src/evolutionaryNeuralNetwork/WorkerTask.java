@@ -236,5 +236,36 @@ public class WorkerTask implements Callable<Double> {
 		return newChromosome;
 	} // end randomChromosome()
 	
+	private NeuralNetwork[] generateNetworks(double[][] population) {
+		NeuralNetwork[] networks = new NeuralNetwork[popSize];
+		for (int i = 0; i < popSize; i++) {
+			networks[i] = new NeuralNetwork(population[i], nInputs, nOutputs, nLayers, nNeurons, af);
+		}
+		return networks;
+	} // end generateNetworks()
+	
+	private double[] fitnessPop(NeuralNetwork[] networks, DataSet learningData) {
+		double[] result = new double[popSize];
+		for (int i = 0; i < popSize; i++) {
+			result[i] = fitness(networks[i], learningData);
+		}
+		return result;
+	} // end fitnessPop()
+	
+	public NeuralNetwork getBestNN() {
+		NeuralNetwork[] networks = generateNetworks(population);
+		double[] fitness = fitnessPop(networks, learningData);
+		double minFitness = Double.MAX_VALUE;
+		NeuralNetwork bestNN = null;
+		
+		for (int i = 0; i < fitness.length; i++) {
+			if (fitness[i] < minFitness) {
+				minFitness = fitness[i];
+				bestNN = networks[i];
+			}
+		}
+		return bestNN;
+	}
+	
 
 }
