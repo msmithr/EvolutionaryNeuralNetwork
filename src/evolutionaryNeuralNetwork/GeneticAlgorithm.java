@@ -120,8 +120,9 @@ public class GeneticAlgorithm implements GeneticAlgorithmInterface{
 			return -1;
 		}
 
-		System.out.println(minFitness);
-		return minFitness;
+		System.out.println("Iteration: " + iterationNumber++);
+		System.out.println("\tBest: " + minFitness/nOutputs + "%");
+		return minFitness/nOutputs;
 	} // end iterate()
 	
 	/**

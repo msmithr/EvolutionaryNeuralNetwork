@@ -513,7 +513,7 @@ public class DriverUI extends JFrame {
 			int iterations = Integer.parseInt(iterateTemp);
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
-					popSize, crossoverPropability, mutationPropability, 
+					popSize, crossoverPropability, mutationPropability, 0.4,
 					tournSize, learningData, af);
 			
 			result = moon.optimize(iterations);
@@ -615,7 +615,7 @@ public class DriverUI extends JFrame {
 			double error = Double.parseDouble(errorTemp);
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
-					popSize, crossoverPropability, mutationPropability, 
+					popSize, crossoverPropability, mutationPropability, 0.4,
 					tournSize, learningData, af);
 			
 			result = moon.optimizeUntil(error);
