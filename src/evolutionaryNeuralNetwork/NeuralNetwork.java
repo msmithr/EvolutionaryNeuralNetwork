@@ -12,7 +12,7 @@ import evolutionaryNeuralNetworkInterfaces.NeuralNetworkInterface;
 public class NeuralNetwork implements NeuralNetworkInterface {
 	private double[][][] weightMatrices;
 	private double[][] thresholdVectors;
-	private double[] chromosome;
+	public double[] chromosome;
 	private int nInputs;
 	private int nOutputs;
 	private int nLayers;

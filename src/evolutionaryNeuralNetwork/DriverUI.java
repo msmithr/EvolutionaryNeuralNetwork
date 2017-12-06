@@ -124,6 +124,21 @@ public class DriverUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				GeneticAlgorithm.stop();
+				textFieldNInputs.setEditable(true);
+				textFieldNOutputs.setEditable(true);
+				textFieldLayers.setEditable(true);
+				textFieldNeuronsLayer.setEditable(true);
+				textFieldPopSize.setEditable(true);
+				textFieldCrossover.setEditable(true);
+				textFieldMutation.setEditable(true);
+				textFieldTournamentSize.setEditable(true);
+				comboBoxAF.setEnabled(true);
+				textFieldNIterations.setEditable(true);
+				textFieldErrorUntil.setEditable(true);
+				btnStop.setEnabled(false);
+				btnQuery.setEnabled(true);
+				btnSaveNN.setEnabled(true);
+				btnLoadNN.setEnabled(true);
 			}
 		});
 		contentPane.add(btnStop);
@@ -513,10 +528,12 @@ public class DriverUI extends JFrame {
 			int iterations = Integer.parseInt(iterateTemp);
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
-					popSize, crossoverPropability, mutationPropability, 
+					popSize, crossoverPropability, mutationPropability, 0.4,
 					tournSize, learningData, af);
 			
 			result = moon.optimize(iterations);
+			
+			System.out.println("I am here");
 			
 			textFieldNInputs.setEditable(true);
 			textFieldNOutputs.setEditable(true);
@@ -615,10 +632,12 @@ public class DriverUI extends JFrame {
 			double error = Double.parseDouble(errorTemp);
 			
 			GeneticAlgorithm moon = new GeneticAlgorithm(nInputs, nOutputs, nLayers, nNeurons, 
-					popSize, crossoverPropability, mutationPropability, 
+					popSize, crossoverPropability, mutationPropability, 0.4,
 					tournSize, learningData, af);
 			
 			result = moon.optimizeUntil(error);
+			
+			System.out.println("I am here");
 
 			textFieldNInputs.setEditable(true);
 			textFieldNOutputs.setEditable(true);
