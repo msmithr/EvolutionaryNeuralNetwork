@@ -128,22 +128,6 @@ public class DriverUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				GeneticAlgorithm.stop();
-				textFieldNInputs.setEditable(true);
-				textFieldNOutputs.setEditable(true);
-				textFieldLayers.setEditable(true);
-				textFieldNeuronsLayer.setEditable(true);
-				textFieldPopSize.setEditable(true);
-				textFieldCrossover.setEditable(true);
-				textFieldMutation.setEditable(true);
-				textFieldMigrationProbability.setEditable(true);
-				textFieldTournamentSize.setEditable(true);
-				comboBoxAF.setEnabled(true);
-				textFieldNIterations.setEditable(true);
-				textFieldErrorUntil.setEditable(true);
-				btnStop.setEnabled(false);
-				btnQuery.setEnabled(true);
-				btnSaveNN.setEnabled(true);
-				btnLoadNN.setEnabled(true);
 			}
 		});
 		contentPane.add(btnStop);
