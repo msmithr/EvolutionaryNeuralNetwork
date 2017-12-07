@@ -356,7 +356,7 @@ public class DriverUI extends JFrame {
 		});
 		contentPane.add(btnLoadNN);
 		
-		JLabel lblError = new JLabel("Output");
+		JLabel lblError = new JLabel("Error");
 		lblError.setBounds(406, 113, 46, 14);
 		contentPane.add(lblError);
 		
