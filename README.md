@@ -20,7 +20,7 @@ The "Load Data" button is used to load in an input data file. This data file req
 
 0
 
-Would be a proper data file for logical XOR. The number of inputs and outputs must be pre-entered before loading the file.
+Would be a proper data file for logical XOR. The number of inputs and outputs must be pre-entered before loading the file. A python script is included for normalizing the inputs to these files.
 
 ## Parameters:
 Number of Inputs: Number of inputs in each data item
@@ -42,3 +42,6 @@ Once the network is trained, it can be queried freely by the user. The user can 
 
 ## Saving and Loading
 Using the "Save NN" button, the user can save a trained Neural Network, to avoid having to train again in the future. This writes all of the information needed to construct the network out to a file. Using "Load NN", the user can reload one of these files to re-obtain the network without training.
+
+## Example Data Files
+Two example data files are included, wineData and chessData. wineData includes chemical analysis of various wines and information about where they came from. chessData includes information about rook-king vs king endgames in chess, and depth of win for white. That is, how many moves is white from winning, optimally. Also included is a pre-trained neural network for the wineData.
