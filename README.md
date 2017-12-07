@@ -5,12 +5,19 @@ Neural networks trained via island model genetic algorithms.
 The "Load Data" button is used to load in an input data file. This data file requires a specific form. For example,
 
 0 0
+
 0
+
 0 1
+
 1
+
 1 0
+
 1
+
 1 1
+
 0
 
 Would be a proper data file for logical XOR. The number of inputs and outputs must be pre-entered before loading the file.
