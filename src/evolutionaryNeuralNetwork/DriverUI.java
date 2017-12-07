@@ -650,8 +650,6 @@ public class DriverUI extends JFrame {
 					tournSize, learningData, af);
 			
 			result = moon.optimizeUntil(error);
-			
-			System.out.println("I am here");
 
 			textFieldNInputs.setEditable(true);
 			textFieldNOutputs.setEditable(true);
