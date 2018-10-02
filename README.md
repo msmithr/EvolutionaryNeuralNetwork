@@ -1,4 +1,4 @@
-# Island Model Evolutionary Neural Network
+# Evolutionary Neural Network
 Neural networks trained via island model genetic algorithms.
 
 ## Data File
